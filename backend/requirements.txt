@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+pymysql
+cryptography
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==3.2.2
+python-dotenv
+python-multipart
+pydantic[email]
+pydantic-settings
+mercadopago

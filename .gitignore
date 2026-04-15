@@ -1,0 +1,83 @@
+# =============================
+# Project-wide .gitignore
+# Stack: FastAPI (Python) + React/Vite (TypeScript)
+# =============================
+
+# --- Environment and secrets ---
+.env
+.env.*
+*.env
+!.env.example
+!.env.sample
+
+# --- Python virtual environments ---
+venv/
+.venv/
+env/
+ENV/
+backend/venv/
+backend/.venv/
+
+# --- Python cache and compiled files ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Python tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+.tox/
+.nox/
+
+# --- Python packaging/build artifacts ---
+build/
+dist/
+site/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
+
+# --- Python coverage ---
+.coverage
+.coverage.*
+htmlcov/
+
+# --- Local Python/IDE state ---
+.python-version
+.ipynb_checkpoints/
+
+# --- Node dependencies and cache ---
+node_modules/
+frontend/node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# --- Vite/TypeScript build artifacts ---
+frontend/dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+
+# --- Frontend test/lint cache ---
+coverage/
+.eslintcache
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- OS/editor generated files ---
+.DS_Store
+Thumbs.db
+.vscode-test/

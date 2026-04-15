@@ -52,6 +52,14 @@ export interface Pago {
   fecha_pago: string;
 }
 
+export interface Resena {
+  id: string;
+  usuario_id: string;
+  puntuacion: number;
+  comentario?: string;
+  fecha_creacion: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;

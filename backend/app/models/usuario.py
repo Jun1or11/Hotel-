@@ -25,6 +25,7 @@ class Usuario(Base):
 
     # Relaciones
     reservas = relationship("Reserva", back_populates="usuario")
+    resena = relationship("Resena", back_populates="usuario", uselist=False, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Usuario {self.email}>"

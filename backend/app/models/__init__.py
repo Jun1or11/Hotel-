@@ -3,6 +3,7 @@ from app.models.usuario import Usuario, RolEnum
 from app.models.habitacion import Habitacion, TipoEnum, EstadoHabitacionEnum
 from app.models.reserva import Reserva, EstadoReservaEnum
 from app.models.pago import Pago, MetodoPagoEnum, EstadoPagoEnum
+from app.models.resena import Resena
 
 __all__ = [
     "Usuario",
@@ -15,4 +16,5 @@ __all__ = [
     "Pago",
     "MetodoPagoEnum",
     "EstadoPagoEnum",
+    "Resena",
 ]

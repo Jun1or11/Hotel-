@@ -9,6 +9,13 @@ interface DashboardStats {
   ingresos_mes: number;
 }
 
+interface PopularRoom {
+  habitacion_id: number;
+  numero: string;
+  tipo: string;
+  total_reservas: number;
+}
+
 interface RecentReservation {
   id: number;
   usuario_id?: number;
@@ -27,6 +34,7 @@ const getStatusClass = (status: string) => `status-chip status-${status}`;
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recent, setRecent] = useState<RecentReservation[]>([]);
+  const [popularRooms, setPopularRooms] = useState<PopularRoom[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
 
@@ -39,9 +47,10 @@ const Dashboard: React.FC = () => {
     setError('');
     let hadAnyError = false;
 
-    const [statsResult, recentResult] = await Promise.allSettled([
+    const [statsResult, recentResult, popularRoomsResult] = await Promise.allSettled([
       axiosInstance.get('/api/dashboard/stats'),
       axiosInstance.get('/api/reservas?limit=5'),
+      axiosInstance.get('/api/dashboard/habitaciones-populares?limit=5'),
     ]);
 
     if (statsResult.status === 'fulfilled') {
@@ -63,6 +72,14 @@ const Dashboard: React.FC = () => {
       hadAnyError = true;
       setRecent([]);
       console.error('Error fetching recent reservations:', recentResult.reason);
+    }
+
+    if (popularRoomsResult.status === 'fulfilled') {
+      setPopularRooms(popularRoomsResult.value.data);
+    } else {
+      hadAnyError = true;
+      setPopularRooms([]);
+      console.error('Error fetching popular rooms:', popularRoomsResult.reason);
     }
 
     if (hadAnyError) {
@@ -204,6 +221,43 @@ const Dashboard: React.FC = () => {
                 <tr>
                   <td colSpan={5} style={{ color: 'var(--muted)', textAlign: 'center' }}>
                     No hay reservas recientes para mostrar.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="panel table-wrap" style={{ marginTop: 16 }}>
+          <h2 style={{ color: 'var(--gold)', padding: '0.95rem 1rem', borderBottom: '1px solid var(--border)' }}>
+            Habitaciones Mas Solicitadas
+          </h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Ranking</th>
+                <th>Habitacion</th>
+                <th>Tipo</th>
+                <th>Total Reservas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {popularRooms.map((room, index) => (
+                <tr key={room.habitacion_id}>
+                  <td style={{ color: 'var(--text)' }}>#{index + 1}</td>
+                  <td style={{ color: 'var(--text)' }}>#{room.numero}</td>
+                  <td>
+                    <span className={getStatusClass(room.tipo)}>
+                      {room.tipo}
+                    </span>
+                  </td>
+                  <td style={{ color: 'var(--gold)' }}>{room.total_reservas}</td>
+                </tr>
+              ))}
+              {popularRooms.length === 0 && (
+                <tr>
+                  <td colSpan={4} style={{ color: 'var(--muted)', textAlign: 'center' }}>
+                    Aun no hay suficientes reservas para calcular popularidad.
                   </td>
                 </tr>
               )}

@@ -5,8 +5,10 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import require_admin
+from app.crud.habitacion_popular import get_top_habitaciones_populares
 from app.database import get_db
 from app.models import EstadoPagoEnum, EstadoReservaEnum, Habitacion, Pago, Reserva
+from app.schemas.habitacion_popular import HabitacionPopularResponse
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -59,3 +61,16 @@ def get_dashboard_stats(
         "reservas_pendientes": int(reservas_pendientes),
         "ingresos_mes": float(ingresos_mes or 0),
     }
+
+
+@router.get("/habitaciones-populares", response_model=list[HabitacionPopularResponse])
+def get_habitaciones_populares(
+    db: Session = Depends(get_db),
+    admin: None = Depends(require_admin),
+    limit: int = 5,
+):
+    """
+    Devuelve ranking de habitaciones con mayor cantidad de reservas registradas.
+    """
+    safe_limit = max(1, min(limit, 20))
+    return get_top_habitaciones_populares(db, limit=safe_limit)

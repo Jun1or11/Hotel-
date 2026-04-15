@@ -34,6 +34,7 @@ class Habitacion(Base):
 
     # Relaciones
     reservas = relationship("Reserva", back_populates="habitacion")
+    popularidad = relationship("HabitacionPopular", back_populates="habitacion", uselist=False)
 
     def __repr__(self):
         return f"<Habitacion {self.numero}>"

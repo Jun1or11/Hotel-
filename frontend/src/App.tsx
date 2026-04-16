@@ -1,4 +1,3 @@
-import React from 'react';
 import Router from './router/index';
 import { AuthProvider } from './context/AuthContext';
 

@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     """
     # Base de datos
     db_host: str = "localhost"
-    db_port: int = 3306
+    db_port: int = 3311
     db_name: str = "hotel_nova"
     db_user: str = "root"
     db_password: str = ""

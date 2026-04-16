@@ -9,6 +9,7 @@
 *.env
 !.env.example
 !.env.sample
+!backend/.env
 
 # --- Python virtual environments ---
 venv/

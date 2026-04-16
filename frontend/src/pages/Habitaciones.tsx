@@ -8,16 +8,15 @@ import axiosInstance from '../api/axios';
 const Habitaciones: React.FC = () => {
   const [habitaciones, setHabitaciones] = useState<Habitacion[]>([]);
   const [filteredHabitaciones, setFilteredHabitaciones] = useState<Habitacion[]>([]);
-  const [availableRoomIds, setAvailableRoomIds] = useState<Set<string> | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<Habitacion | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   const [tipo, setTipo] = useState('');
-  const [fechaCheckin, setFechaCheckin] = useState('');
-  const [fechaCheckout, setFechaCheckout] = useState('');
   const [capacidad, setCapacidad] = useState('');
+  const [precioMax, setPrecioMax] = useState('');
+  const [ordenarPor, setOrdenarPor] = useState('');
 
   useEffect(() => {
     fetchHabitaciones();
@@ -25,11 +24,7 @@ const Habitaciones: React.FC = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [habitaciones, tipo, fechaCheckin, fechaCheckout, capacidad]);
-
-  useEffect(() => {
-    fetchAvailableForDates();
-  }, [habitaciones, fechaCheckin, fechaCheckout]);
+  }, [habitaciones, tipo, capacidad, precioMax, ordenarPor]);
 
   const fetchHabitaciones = async () => {
     try {
@@ -43,7 +38,7 @@ const Habitaciones: React.FC = () => {
   };
 
   const applyFilters = () => {
-    let filtered = habitaciones;
+    let filtered = [...habitaciones];
 
     if (tipo) {
       filtered = filtered.filter((h) => h.tipo === tipo);
@@ -53,28 +48,19 @@ const Habitaciones: React.FC = () => {
       filtered = filtered.filter((h) => h.capacidad >= parseInt(capacidad));
     }
 
+    if (precioMax) {
+      filtered = filtered.filter((h) => Number(h.precio_noche) <= Number(precioMax));
+    }
+
+    if (ordenarPor === 'precio_asc') {
+      filtered.sort((a, b) => Number(a.precio_noche) - Number(b.precio_noche));
+    } else if (ordenarPor === 'precio_desc') {
+      filtered.sort((a, b) => Number(b.precio_noche) - Number(a.precio_noche));
+    } else if (ordenarPor === 'capacidad_desc') {
+      filtered.sort((a, b) => b.capacidad - a.capacidad);
+    }
+
     setFilteredHabitaciones(filtered);
-  };
-
-  const fetchAvailableForDates = async () => {
-    if (!fechaCheckin || !fechaCheckout) {
-      setAvailableRoomIds(null);
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.get('/api/habitaciones', {
-        params: {
-          fecha_checkin: fechaCheckin,
-          fecha_checkout: fechaCheckout,
-        },
-      });
-      const ids = new Set<string>(response.data.map((room: Habitacion) => String(room.id)));
-      setAvailableRoomIds(ids);
-    } catch (error) {
-      console.error('Error fetching date availability:', error);
-      setAvailableRoomIds(null);
-    }
   };
 
   const handleReservar = (habitacion: Habitacion) => {
@@ -133,24 +119,14 @@ const Habitaciones: React.FC = () => {
 
           <div>
             <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.85rem' }}>
-              Check-in
+              Precio maximo
             </label>
             <input
-              type="date"
-              value={fechaCheckin}
-              onChange={(e) => setFechaCheckin(e.target.value)}
-              className="form-control"
-            />
-          </div>
-
-          <div>
-            <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.85rem' }}>
-              Check-out
-            </label>
-            <input
-              type="date"
-              value={fechaCheckout}
-              onChange={(e) => setFechaCheckout(e.target.value)}
+              type="number"
+              min="0"
+              placeholder="Ej. 250"
+              value={precioMax}
+              onChange={(e) => setPrecioMax(e.target.value)}
               className="form-control"
             />
           </div>
@@ -171,6 +147,22 @@ const Habitaciones: React.FC = () => {
               <option value="6">6+ personas</option>
             </select>
           </div>
+
+          <div>
+            <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.85rem' }}>
+              Ordenar por
+            </label>
+            <select
+              value={ordenarPor}
+              onChange={(e) => setOrdenarPor(e.target.value)}
+              className="form-control"
+            >
+              <option value="">Sin ordenar</option>
+              <option value="precio_asc">Precio: menor a mayor</option>
+              <option value="precio_desc">Precio: mayor a menor</option>
+              <option value="capacidad_desc">Capacidad: mayor a menor</option>
+            </select>
+          </div>
         </div>
 
         <div style={{ marginTop: 18 }} className="room-grid">
@@ -179,12 +171,6 @@ const Habitaciones: React.FC = () => {
               key={habitacion.id}
               habitacion={habitacion}
               onReservar={handleReservar}
-              isReservadaPorFecha={Boolean(
-                fechaCheckin &&
-                fechaCheckout &&
-                availableRoomIds &&
-                !availableRoomIds.has(String(habitacion.id))
-              )}
             />
           ))}
         </div>

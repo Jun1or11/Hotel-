@@ -1,10 +1,13 @@
 import Router from './router/index';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 function App() {
   return (
     <AuthProvider>
-      <Router />
+      <NotificationProvider>
+        <Router />
+      </NotificationProvider>
     </AuthProvider>
   );
 }

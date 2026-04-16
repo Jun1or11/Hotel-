@@ -8,7 +8,6 @@ from app.models import Reserva
 from app.models.habitacion import EstadoHabitacionEnum
 from app.schemas.reserva import ReservaCreate
 from app.crud.habitacion import get_habitacion_by_id
-from app.crud.habitacion_popular import register_habitacion_reserva
 
 
 def check_overlap(
@@ -74,7 +73,6 @@ def create_reserva(db: Session, reserva: ReservaCreate, usuario_id: int) -> Rese
     )
     
     db.add(db_reserva)
-    register_habitacion_reserva(db, reserva.habitacion_id)
     db.commit()
     db.refresh(db_reserva)
     return db_reserva

@@ -16,6 +16,8 @@ from app.crud.reserva import (
     delete_reserva
 )
 from app.crud.habitacion import get_habitacion_by_id, update_habitacion
+from app.crud.habitacion_popular import register_habitacion_reserva
+from app.crud.notificacion import create_notificacion
 from app.schemas.habitacion import HabitacionUpdate
 from app.core.dependencies import get_current_user, require_admin
 from app.models import EstadoHabitacionEnum, EstadoPagoEnum, MetodoPagoEnum, Pago, Usuario
@@ -82,12 +84,22 @@ def _assert_reserva_access(reserva, current_user: Usuario) -> None:
         )
 
 
-def _register_approved_payment(db: Session, *, reserva_id: int, amount: float, payment_id: str = "") -> None:
-    """Registra un pago aprobado sin duplicar por referencia externa."""
+def _register_approved_payment(db: Session, *, reserva_id: int, amount: float, payment_id: str = "") -> bool:
+    """Registra un pago aprobado sin duplicar por referencia externa.
+    Retorna True cuando se crea un nuevo pago aprobado.
+    """
     if payment_id:
         existing = db.query(Pago).filter(Pago.referencia_externa == payment_id).first()
         if existing:
-            return
+            return False
+
+    existing_approved = (
+        db.query(Pago)
+        .filter(Pago.reserva_id == reserva_id, Pago.estado == EstadoPagoEnum.aprobado)
+        .first()
+    )
+    if existing_approved:
+        return False
 
     pago = Pago(
         reserva_id=reserva_id,
@@ -98,6 +110,7 @@ def _register_approved_payment(db: Session, *, reserva_id: int, amount: float, p
         referencia_externa=payment_id or None,
     )
     db.add(pago)
+    return True
 
 
 def _format_currency(value: Decimal | float | int | str) -> str:
@@ -262,6 +275,7 @@ def pago_exitoso(
         amount=float(reserva.total),
         payment_id=payment_id,
     )
+    register_habitacion_reserva(db, reserva.habitacion_id)
     db.add(reserva)
     db.commit()
     db.refresh(reserva)
@@ -340,6 +354,7 @@ async def mercadopago_webhook(
             amount=float(reserva.total),
             payment_id=str(payment_id),
         )
+        register_habitacion_reserva(db, reserva.habitacion_id)
         db.add(reserva)
         db.commit()
         db.refresh(reserva)
@@ -389,12 +404,24 @@ def approve_reserva(
 ):
     """
     Aprueba una reserva y cambia su estado a 'activo' (solo administrador).
+    Solo se permite si la reserva ya tiene un pago aprobado.
     """
     reserva_before = get_reserva_by_id(db, reserva_id)
     if not reserva_before:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Reserva no encontrada"
+        )
+
+    approved_payment = (
+        db.query(Pago.id)
+        .filter(Pago.reserva_id == reserva_id, Pago.estado == EstadoPagoEnum.aprobado)
+        .first()
+    )
+    if not approved_payment:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se puede aprobar una reserva sin pago aprobado"
         )
 
     was_active = reserva_before.estado.value == "activo"
@@ -458,6 +485,63 @@ def checkout_reserva(
     return update_reserva_estado(db, reserva_id, "completado")
 
 
+@router.put("/{reserva_id}/completar", response_model=ReservaResponse)
+def completar_reserva_por_fecha(
+    reserva_id: int,
+    db: Session = Depends(get_db),
+    admin: None = Depends(require_admin)
+):
+    """
+    Marca una reserva como completada cuando ya pasó su fecha de salida.
+    También libera la habitación.
+    """
+    reserva = get_reserva_by_id(db, reserva_id)
+    if not reserva:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reserva no encontrada"
+        )
+
+    if reserva.estado.value != "activo":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Solo se puede completar una reserva activa"
+        )
+
+    habitacion_update = HabitacionUpdate(estado=EstadoHabitacionEnum.libre)
+    update_habitacion(db, reserva.habitacion_id, habitacion_update)
+
+    return update_reserva_estado(db, reserva_id, "completado")
+
+
+@router.put("/{reserva_id}/liberar", response_model=ReservaResponse)
+def liberar_habitacion_reserva(
+    reserva_id: int,
+    db: Session = Depends(get_db),
+    admin: None = Depends(require_admin)
+):
+    """
+    Libera la habitación por salida anticipada y marca la reserva como completada.
+    """
+    reserva = get_reserva_by_id(db, reserva_id)
+    if not reserva:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reserva no encontrada"
+        )
+
+    if reserva.estado.value != "activo":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Solo se puede liberar una reserva activa"
+        )
+
+    habitacion_update = HabitacionUpdate(estado=EstadoHabitacionEnum.libre)
+    update_habitacion(db, reserva.habitacion_id, habitacion_update)
+
+    return update_reserva_estado(db, reserva_id, "completado")
+
+
 @router.put("/{reserva_id}/cancelar", response_model=ReservaResponse)
 def cancel_reserva(
     reserva_id: int,
@@ -494,5 +578,12 @@ def cancel_reserva(
 
     habitacion_update = HabitacionUpdate(estado=EstadoHabitacionEnum.libre)
     update_habitacion(db, reserva.habitacion_id, habitacion_update)
+
+    if is_admin and reserva.usuario_id != current_user.id:
+        create_notificacion(
+            db,
+            usuario_id=reserva.usuario_id,
+            mensaje=f"Tu reserva #{reserva.id} fue cancelada por administracion.",
+        )
 
     return reserva_actualizada

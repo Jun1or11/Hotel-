@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import ReviewModal from './ReviewModal';
+import NotificationBell from './NotificationBell';
 
 const Navbar: React.FC = () => {
   const { user, logout, isAdmin } = useAuthContext();
@@ -103,6 +104,12 @@ const Navbar: React.FC = () => {
                       Reservas
                     </Link>
                     <Link
+                      to="/admin/notificaciones"
+                      style={{ color: 'var(--text)', fontSize: '.95rem' }}
+                    >
+                      Notificaciones
+                    </Link>
+                    <Link
                       to="/admin/usuarios"
                       style={{ color: 'var(--text)', fontSize: '.95rem' }}
                     >
@@ -135,6 +142,8 @@ const Navbar: React.FC = () => {
                     ★
                   </button>
                 )}
+
+                {!isAdmin() && <NotificationBell />}
 
                 <div style={{ position: 'relative' }}>
                   <button

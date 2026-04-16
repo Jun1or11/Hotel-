@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth, dashboard, habitaciones, pagos, reservas, resenas, usuarios
+from app.routers import auth, dashboard, habitaciones, notificaciones, pagos, reservas, resenas, usuarios
 from app.database import init_db
 
 # Crear aplicación FastAPI
@@ -33,6 +33,7 @@ app.include_router(reservas.router, prefix="/api")
 app.include_router(pagos.router, prefix="/api")
 app.include_router(usuarios.router, prefix="/api")
 app.include_router(resenas.router, prefix="/api")
+app.include_router(notificaciones.router, prefix="/api")
 
 
 @app.get("/")

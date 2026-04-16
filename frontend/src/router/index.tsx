@@ -10,6 +10,7 @@ import Historial from '../pages/Historial';
 import Perfil from '../pages/Perfil';
 import Dashboard from '../pages/admin/Dashboard';
 import GestionHabitaciones from '../pages/admin/GestionHabitaciones';
+import GestionNotificaciones from '../pages/admin/GestionNotificaciones';
 import GestionReservas from '../pages/admin/GestionReservas';
 import GestionUsuarios from '../pages/admin/GestionUsuarios';
 import { useAuthContext } from '../context/AuthContext';
@@ -70,6 +71,10 @@ const Router: React.FC = () => {
         <Route
           path="/admin/reservas"
           element={<ProtectedRoute component={<GestionReservas />} requireAdmin />}
+        />
+        <Route
+          path="/admin/notificaciones"
+          element={<ProtectedRoute component={<GestionNotificaciones />} requireAdmin />}
         />
         <Route
           path="/admin/usuarios"

@@ -19,6 +19,14 @@ const Auth: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login, register, token, isAdmin, authLoading } = useAuthContext();
+  const backgroundImageStyle = {
+    backgroundImage:
+      "linear-gradient(180deg, rgba(10, 10, 12, 0.78) 0%, rgba(10, 10, 12, 0.9) 100%), url('https://images.unsplash.com/photo-1517840901100-8179e982acb7?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed',
+  } as const;
 
   useEffect(() => {
     setTab(location.pathname === '/register' ? 'register' : 'login');
@@ -89,7 +97,7 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', ...backgroundImageStyle }}>
       <Navbar />
       <div
         style={{

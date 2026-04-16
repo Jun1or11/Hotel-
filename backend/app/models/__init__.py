@@ -5,6 +5,7 @@ from app.models.habitacion_popular import HabitacionPopular
 from app.models.reserva import Reserva, EstadoReservaEnum
 from app.models.pago import Pago, MetodoPagoEnum, EstadoPagoEnum
 from app.models.resena import Resena
+from app.models.notificacion import Notificacion
 
 __all__ = [
     "Usuario",
@@ -19,4 +20,5 @@ __all__ = [
     "MetodoPagoEnum",
     "EstadoPagoEnum",
     "Resena",
+    "Notificacion",
 ]

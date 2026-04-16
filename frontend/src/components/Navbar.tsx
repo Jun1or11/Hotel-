@@ -8,8 +8,6 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = React.useState(false);
   const [showReviewModal, setShowReviewModal] = React.useState(false);
-  const shortName = user?.nombre?.trim().split(' ')[0] || '';
-  const userInitial = shortName ? shortName.charAt(0).toUpperCase() : 'U';
 
   const handleLogout = () => {
     logout();
@@ -123,13 +121,13 @@ const Navbar: React.FC = () => {
                     }}
                     title="Dejar reseña"
                     style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 9,
+                      width: 38,
+                      height: 38,
+                      borderRadius: 10,
                       border: '1px solid var(--border)',
                       backgroundColor: 'var(--surface2)',
                       color: 'var(--gold)',
-                      fontSize: '.95rem',
+                      fontSize: '1rem',
                     }}
                   >
                     ★
@@ -142,33 +140,16 @@ const Navbar: React.FC = () => {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 6,
-                      padding: '0.32rem 0.5rem',
-                      borderRadius: 9,
+                      gap: 8,
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: 10,
                       border: '1px solid var(--border)',
                       backgroundColor: 'var(--surface2)',
                       color: 'var(--text)',
                     }}
                   >
-                    <span
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: '999px',
-                        display: 'grid',
-                        placeItems: 'center',
-                        fontSize: '.72rem',
-                        fontWeight: 700,
-                        color: 'var(--bg)',
-                        backgroundColor: 'var(--gold)',
-                      }}
-                    >
-                      {userInitial}
-                    </span>
-                    <span style={{ maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '.86rem' }}>
-                      {shortName}
-                    </span>
-                    <span style={{ fontSize: '.68rem', color: 'var(--muted)' }}>▼</span>
+                    <span style={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.nombre}</span>
+                    <span>▼</span>
                   </button>
 
                   {showMenu && (

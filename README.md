@@ -19,11 +19,6 @@ Email: admin1@hotelnova.com
 Password: Promocion135
 ```
 
-## Backend en Render + PostgreSQL
-
-- Build Command: `pip install -r requirements.txt`
-- Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- Variables mínimas en Render:
-	- `DATABASE_URL` (la URL de PostgreSQL de Render)
-	- `FRONTEND_URL` (tu dominio de Vercel)
-	- `SECRET_KEY`
+mercado pago:
+TESTUSER5192568232263967997
+gKjjJWXvAB

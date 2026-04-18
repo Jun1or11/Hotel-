@@ -16,6 +16,20 @@ interface PopularRoom {
   total_reservas: number;
 }
 
+interface ReviewSummaryItem {
+  id: number;
+  usuario_nombre: string;
+  puntuacion: number;
+  comentario?: string | null;
+  fecha_creacion: string;
+}
+
+interface ReviewSummary {
+  promedio_puntuacion: number;
+  total_resenas: number;
+  recientes: ReviewSummaryItem[];
+}
+
 interface RecentReservation {
   id: number;
   usuario_id?: number;
@@ -35,6 +49,7 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recent, setRecent] = useState<RecentReservation[]>([]);
   const [popularRooms, setPopularRooms] = useState<PopularRoom[]>([]);
+  const [reviews, setReviews] = useState<ReviewSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
 
@@ -47,10 +62,11 @@ const Dashboard: React.FC = () => {
     setError('');
     let hadAnyError = false;
 
-    const [statsResult, recentResult, popularRoomsResult] = await Promise.allSettled([
+    const [statsResult, recentResult, popularRoomsResult, reviewsResult] = await Promise.allSettled([
       axiosInstance.get('/api/dashboard/stats'),
       axiosInstance.get('/api/reservas?limit=5'),
       axiosInstance.get('/api/dashboard/habitaciones-populares?limit=5'),
+      axiosInstance.get('/api/dashboard/resenas?limit=5'),
     ]);
 
     if (statsResult.status === 'fulfilled') {
@@ -80,6 +96,18 @@ const Dashboard: React.FC = () => {
       hadAnyError = true;
       setPopularRooms([]);
       console.error('Error fetching popular rooms:', popularRoomsResult.reason);
+    }
+
+    if (reviewsResult.status === 'fulfilled') {
+      setReviews(reviewsResult.value.data);
+    } else {
+      hadAnyError = true;
+      setReviews({
+        promedio_puntuacion: 0,
+        total_resenas: 0,
+        recientes: [],
+      });
+      console.error('Error fetching review summary:', reviewsResult.reason);
     }
 
     if (hadAnyError) {
@@ -263,6 +291,63 @@ const Dashboard: React.FC = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="panel" style={{ marginTop: 16, padding: '0.95rem 1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 14, flexWrap: 'wrap' }}>
+            <div>
+              <h2 style={{ color: 'var(--gold)', marginBottom: 4 }}>Reseñas y comentarios</h2>
+              <p style={{ color: 'var(--muted)', fontSize: '.9rem' }}>
+                Valoración general de los huéspedes y comentarios más recientes.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <div className="status-chip status-admin" style={{ padding: '0.45rem 0.7rem' }}>
+                Promedio: {reviews?.promedio_puntuacion?.toFixed(1) ?? '0.0'}/5
+              </div>
+              <div className="status-chip status-activo" style={{ padding: '0.45rem 0.7rem' }}>
+                Total reseñas: {reviews?.total_resenas ?? 0}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gap: 12 }}>
+            {reviews?.recientes?.length ? (
+              reviews.recientes.map((review) => (
+                <div
+                  key={review.id}
+                  style={{
+                    border: '1px solid var(--border)',
+                    borderRadius: 14,
+                    padding: '0.9rem 1rem',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div>
+                      <p style={{ color: 'var(--text)', fontWeight: 600, marginBottom: 4 }}>
+                        {review.usuario_nombre}
+                      </p>
+                      <p style={{ color: 'var(--muted)', fontSize: '.84rem' }}>
+                        {new Date(review.fecha_creacion).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div style={{ color: 'var(--gold)', fontWeight: 700 }}>
+                      {'★'.repeat(review.puntuacion)}{'☆'.repeat(5 - review.puntuacion)}
+                    </div>
+                  </div>
+
+                  <p style={{ color: 'var(--text)', marginTop: 10, lineHeight: 1.5 }}>
+                    {review.comentario?.trim() || 'Sin comentario adicional.'}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p style={{ color: 'var(--muted)', textAlign: 'center', padding: '0.75rem 0' }}>
+                Aun no hay reseñas registradas.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

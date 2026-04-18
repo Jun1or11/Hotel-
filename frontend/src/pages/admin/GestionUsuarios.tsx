@@ -35,6 +35,17 @@ const GestionUsuarios: React.FC = () => {
     }
   };
 
+  const handleReactivateUsuario = async (id: string) => {
+    if (confirm('¿Estás seguro de que deseas reactivar este usuario?')) {
+      try {
+        await axiosInstance.put(`/api/usuarios/${id}`, { activo: true });
+        fetchUsuarios();
+      } catch (error) {
+        console.error('Error reactivating user:', error);
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="app-shell">
@@ -79,14 +90,25 @@ const GestionUsuarios: React.FC = () => {
                   </td>
                   <td style={{ color: 'var(--muted)' }}>{new Date(usuario.fecha_registro).toLocaleDateString()}</td>
                   <td>
-                    <button
-                      onClick={() => handleDeleteUsuario(usuario.id)}
-                      className="btn-ghost"
-                      style={{ padding: '0.32rem 0.55rem', color: 'var(--red)' }}
-                      title="Eliminar"
-                    >
-                      Eliminar
-                    </button>
+                    {usuario.activo ? (
+                      <button
+                        onClick={() => handleDeleteUsuario(usuario.id)}
+                        className="btn-ghost"
+                        style={{ padding: '0.32rem 0.55rem', color: 'var(--red)' }}
+                        title="Eliminar"
+                      >
+                        Eliminar
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleReactivateUsuario(usuario.id)}
+                        className="btn-ghost"
+                        style={{ padding: '0.32rem 0.55rem', color: 'var(--green)' }}
+                        title="Reactivar"
+                      >
+                        Reactivar
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

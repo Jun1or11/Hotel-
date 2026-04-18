@@ -10,6 +10,7 @@ Qué crea/actualiza:
 - 3 usuarios huesped de prueba
 - 16 habitaciones de prueba (4 por tipo)
 - 3 reservas de ejemplo ya pagadas
+- 3 reseñas de ejemplo de huespedes
 """
 
 import os
@@ -35,6 +36,7 @@ from app.models import (
     Pago,
     Reserva,
     RolEnum,
+    Resena,
     TipoEnum,
     Usuario,
 )
@@ -233,32 +235,50 @@ SEED_PAID_RESERVATIONS = [
     {
         "user_email": "ana@hotelnova.com",
         "room_number": "201",
-        "checkin": date(2026, 3, 3),
-        "checkout": date(2026, 3, 6),
+        "checkin": date(2026, 4, 18),
+        "checkout": date(2026, 4, 20),
         "num_huespedes": 2,
         "metodo": MetodoPagoEnum.tarjeta,
-        "referencia": "SEED-ANA-201-20260303",
-        "solicitudes": "Check-in temprano",
+        "referencia": "SEED-ANA-201-20260418",
+        "solicitudes": "Check-in temprano y salida flexible",
     },
     {
         "user_email": "luis@hotelnova.com",
         "room_number": "302",
-        "checkin": date(2026, 2, 18),
-        "checkout": date(2026, 2, 21),
+        "checkin": date(2026, 4, 21),
+        "checkout": date(2026, 4, 24),
         "num_huespedes": 3,
         "metodo": MetodoPagoEnum.transferencia,
-        "referencia": "SEED-LUIS-302-20260218",
+        "referencia": "SEED-LUIS-302-20260421",
         "solicitudes": "Cuna adicional",
     },
     {
         "user_email": "maria@hotelnova.com",
         "room_number": "401",
-        "checkin": date(2026, 1, 11),
-        "checkout": date(2026, 1, 13),
+        "checkin": date(2026, 4, 26),
+        "checkout": date(2026, 4, 29),
         "num_huespedes": 2,
         "metodo": MetodoPagoEnum.mercadopago,
-        "referencia": "SEED-MARIA-401-20260111",
+        "referencia": "SEED-MARIA-401-20260426",
         "solicitudes": "Vista exterior",
+    },
+]
+
+SEED_REVIEWS = [
+    {
+        "user_email": "ana@hotelnova.com",
+        "puntuacion": 5,
+        "comentario": "Excelente atencion en recepcion y la habitacion estuvo impecable. Volveria sin duda.",
+    },
+    {
+        "user_email": "luis@hotelnova.com",
+        "puntuacion": 4,
+        "comentario": "La estadia fue muy buena. La limpieza y el descanso estuvieron a la altura.",
+    },
+    {
+        "user_email": "maria@hotelnova.com",
+        "puntuacion": 5,
+        "comentario": "Muy comodo, buena vista y excelente servicio. Recomendado para familias.",
     },
 ]
 
@@ -387,6 +407,32 @@ def upsert_paid_reservation(db, reservation_data: dict) -> str:
     return action
 
 
+def upsert_review(db, review_data: dict) -> str:
+    user_email = review_data["user_email"].strip().lower()
+
+    user = db.query(Usuario).filter(Usuario.email == user_email).first()
+    if not user:
+        raise ValueError(f"Usuario no encontrado para reseña seed: {user_email}")
+
+    resena = db.query(Resena).filter(Resena.usuario_id == user.id).first()
+
+    action = "updated"
+    if not resena:
+        resena = Resena(
+            usuario_id=user.id,
+            puntuacion=review_data["puntuacion"],
+            comentario=review_data.get("comentario"),
+        )
+        db.add(resena)
+        action = "created"
+    else:
+        resena.puntuacion = review_data["puntuacion"]
+        resena.comentario = review_data.get("comentario")
+        db.add(resena)
+
+    return action
+
+
 def rebuild_habitaciones_populares(db) -> int:
     approved_rows = (
         db.query(
@@ -427,6 +473,8 @@ def seed_data() -> None:
     room_updated = 0
     reservation_created = 0
     reservation_updated = 0
+    review_created = 0
+    review_updated = 0
     popular_created = 0
 
     try:
@@ -470,6 +518,14 @@ def seed_data() -> None:
             else:
                 reservation_updated += 1
 
+        # Reseñas de ejemplo
+        for review in SEED_REVIEWS:
+            action = upsert_review(db, review)
+            if action == "created":
+                review_created += 1
+            else:
+                review_updated += 1
+
         popular_created = rebuild_habitaciones_populares(db)
 
         db.commit()
@@ -481,6 +537,8 @@ def seed_data() -> None:
         print(f"- Habitaciones actualizadas: {room_updated}")
         print(f"- Reservas pagadas creadas: {reservation_created}")
         print(f"- Reservas pagadas actualizadas: {reservation_updated}")
+        print(f"- Reseñas creadas: {review_created}")
+        print(f"- Reseñas actualizadas: {review_updated}")
         print(f"- Habitaciones populares reconstruidas: {popular_created}")
         print("\nCredenciales admin:")
         print(f"- Email: {ADMIN_EMAIL}")

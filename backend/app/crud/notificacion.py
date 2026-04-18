@@ -14,6 +14,19 @@ def create_notificacion(db: Session, *, usuario_id: int, mensaje: str) -> Notifi
     return notificacion
 
 
+def create_notificaciones_bulk(db: Session, *, usuario_ids: List[int], mensaje: str) -> int:
+    if not usuario_ids:
+        return 0
+
+    notificaciones = [
+        Notificacion(usuario_id=usuario_id, mensaje=mensaje, leida=False)
+        for usuario_id in usuario_ids
+    ]
+    db.add_all(notificaciones)
+    db.commit()
+    return len(notificaciones)
+
+
 def get_user_notificaciones(db: Session, *, usuario_id: int, skip: int = 0, limit: int = 50) -> List[Notificacion]:
     return (
         db.query(Notificacion)

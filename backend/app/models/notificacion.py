@@ -11,7 +11,7 @@ class Notificacion(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False, index=True)
-    mensaje = Column(String(255), nullable=False)
+    mensaje = Column(String(500), nullable=False)
     leida = Column(Boolean, default=False, nullable=False)
     fecha_creacion = Column(DateTime, default=datetime.utcnow, nullable=False)
 

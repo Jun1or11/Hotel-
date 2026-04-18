@@ -17,3 +17,17 @@ class ResenaResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ResenaDashboardItem(BaseModel):
+    id: int
+    usuario_nombre: str
+    puntuacion: int
+    comentario: str | None = None
+    fecha_creacion: datetime
+
+
+class ResenaDashboardResponse(BaseModel):
+    promedio_puntuacion: float
+    total_resenas: int
+    recientes: list[ResenaDashboardItem]

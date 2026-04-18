@@ -45,6 +45,17 @@ const GestionHabitaciones: React.FC = () => {
     fetchHabitaciones();
   }, []);
 
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [showModal]);
+
   const fetchHabitaciones = async () => {
     try {
       const response = await axiosInstance.get('/api/habitaciones');
@@ -207,13 +218,15 @@ const GestionHabitaciones: React.FC = () => {
               position: 'fixed',
               inset: 0,
               backgroundColor: 'rgba(0, 0, 0, 0.62)',
-              display: 'grid',
-              placeItems: 'center',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              overflowY: 'auto',
               zIndex: 1000,
               padding: 14,
             }}
           >
-            <div className="panel" style={{ width: '100%', maxWidth: 480, padding: '1rem' }}>
+            <div className="panel" style={{ width: '100%', maxWidth: 480, maxHeight: 'calc(100vh - 28px)', overflowY: 'auto', padding: '1rem' }}>
               <h2 style={{ color: 'var(--gold)', marginBottom: 10 }}>
                 {editingId ? 'Editar Habitación' : 'Nueva Habitación'}
               </h2>

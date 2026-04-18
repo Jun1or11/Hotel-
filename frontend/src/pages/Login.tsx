@@ -28,6 +28,8 @@ const Auth: React.FC = () => {
     backgroundAttachment: 'fixed',
   } as const;
 
+  const isGmailEmail = (value: string) => /^[a-z0-9._%+-]+@gmail\.com$/i.test(value.trim());
+
   useEffect(() => {
     setTab(location.pathname === '/register' ? 'register' : 'login');
   }, [location.pathname]);
@@ -57,9 +59,16 @@ const Auth: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!isGmailEmail(normalizedEmail)) {
+      setError('El correo debe ser una cuenta @gmail.com');
+      return;
+    }
+
     setLoading(true);
     try {
-      await register(dni.trim(), nombre.trim(), email.trim().toLowerCase(), password);
+      await register(dni.trim(), nombre.trim(), normalizedEmail, password);
       navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Error al registrarse');
@@ -219,6 +228,9 @@ const Auth: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-control"
+                pattern={tab === 'register' ? '[a-zA-Z0-9._%+-]+@gmail\\.com' : undefined}
+                title={tab === 'register' ? 'Ingresa un correo @gmail.com' : undefined}
+                placeholder={tab === 'register' ? 'tuusuario@gmail.com' : 'tu correo'}
                 required
               />
             </div>

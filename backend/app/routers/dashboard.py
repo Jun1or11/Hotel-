@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import require_admin
 from app.crud.habitacion_popular import get_top_habitaciones_populares
 from app.database import get_db
-from app.models import EstadoPagoEnum, EstadoReservaEnum, Habitacion, Pago, Reserva
+from app.models import EstadoPagoEnum, EstadoReservaEnum, Habitacion, Pago, Reserva, Resena, Usuario
 from app.schemas.habitacion_popular import HabitacionPopularResponse
+from app.schemas.resena import ResenaDashboardItem, ResenaDashboardResponse
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -74,3 +75,43 @@ def get_habitaciones_populares(
     """
     safe_limit = max(1, min(limit, 20))
     return get_top_habitaciones_populares(db, limit=safe_limit)
+
+
+@router.get("/resenas", response_model=ResenaDashboardResponse)
+def get_resenas_dashboard(
+    db: Session = Depends(get_db),
+    admin: None = Depends(require_admin),
+    limit: int = 5,
+):
+    """
+    Devuelve el promedio de reseñas y las más recientes para el dashboard administrativo.
+    """
+    safe_limit = max(1, min(limit, 20))
+
+    total_resenas = db.query(func.count(Resena.id)).scalar() or 0
+    promedio_puntuacion = db.query(func.coalesce(func.avg(Resena.puntuacion), 0)).scalar() or 0
+
+    recent_rows = (
+        db.query(Resena, Usuario.nombre.label("usuario_nombre"))
+        .join(Usuario, Usuario.id == Resena.usuario_id)
+        .order_by(Resena.fecha_creacion.desc())
+        .limit(safe_limit)
+        .all()
+    )
+
+    recientes = [
+        ResenaDashboardItem(
+            id=row.Resena.id,
+            usuario_nombre=row.usuario_nombre,
+            puntuacion=row.Resena.puntuacion,
+            comentario=row.Resena.comentario,
+            fecha_creacion=row.Resena.fecha_creacion,
+        )
+        for row in recent_rows
+    ]
+
+    return ResenaDashboardResponse(
+        promedio_puntuacion=float(promedio_puntuacion or 0),
+        total_resenas=int(total_resenas),
+        recientes=recientes,
+    )

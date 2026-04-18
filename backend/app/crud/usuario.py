@@ -65,11 +65,17 @@ def update_user(db: Session, user_id: int, usuario_update: UsuarioUpdate) -> Opt
 
 
 def delete_user(db: Session, user_id: int) -> bool:
-    """Elimina un usuario."""
+    """Elimina o desactiva un usuario según sus relaciones."""
     db_usuario = get_user_by_id(db, user_id)
     if not db_usuario:
         return False
-    
-    db.delete(db_usuario)
+
+    has_reservas = bool(db_usuario.reservas)
+    if has_reservas:
+        db_usuario.activo = False
+        db.add(db_usuario)
+    else:
+        db.delete(db_usuario)
+
     db.commit()
     return True

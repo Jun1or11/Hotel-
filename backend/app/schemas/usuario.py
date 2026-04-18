@@ -1,8 +1,15 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from datetime import datetime
 from typing import Optional
 
 from app.models import RolEnum
+
+
+def _ensure_gmail_domain(email: str) -> str:
+    normalized_email = email.strip().lower()
+    if not normalized_email.endswith('@gmail.com'):
+        raise ValueError('Solo se permiten correos @gmail.com')
+    return normalized_email
 
 
 class UsuarioCreate(BaseModel):
@@ -11,6 +18,11 @@ class UsuarioCreate(BaseModel):
     nombre: str
     email: EmailStr
     password: str
+
+    @field_validator('email')
+    @classmethod
+    def validate_gmail_email(cls, value: EmailStr) -> str:
+        return _ensure_gmail_domain(str(value))
 
 
 class UsuarioLogin(BaseModel):
@@ -41,6 +53,13 @@ class UsuarioUpdate(BaseModel):
     rol: Optional[RolEnum] = None
     activo: Optional[bool] = None
 
+    @field_validator('email')
+    @classmethod
+    def validate_gmail_email(cls, value: Optional[EmailStr]) -> Optional[str]:
+        if value is None:
+            return value
+        return _ensure_gmail_domain(str(value))
+
 
 class UsuarioSelfUpdate(BaseModel):
     """Schema para actualizar perfil propio."""
@@ -49,6 +68,13 @@ class UsuarioSelfUpdate(BaseModel):
     email: Optional[EmailStr] = None
     current_password: Optional[str] = None
     new_password: Optional[str] = Field(default=None, min_length=6)
+
+    @field_validator('email')
+    @classmethod
+    def validate_gmail_email(cls, value: Optional[EmailStr]) -> Optional[str]:
+        if value is None:
+            return value
+        return _ensure_gmail_domain(str(value))
 
 
 class TokenResponse(BaseModel):

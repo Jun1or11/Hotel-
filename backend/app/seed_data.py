@@ -416,7 +416,7 @@ def rebuild_habitaciones_populares(db) -> int:
 
 def seed_data() -> None:
     settings = get_settings()
-    print(f"Using database: {settings.db_name} at {settings.db_host}:{settings.db_port}")
+    print(f"Using database URL: {settings.database_url.split('@')[-1]}")
 
     init_db()
     db = SessionLocal()

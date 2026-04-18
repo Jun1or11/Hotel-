@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     """
     # Base de datos
     db_host: str = "localhost"
-    db_port: int = 3311
+    db_port: int = 5432
     db_name: str = "hotel_nova"
-    db_user: str = "root"
+    db_user: str = "postgres"
     db_password: str = ""
 
     # Seguridad
@@ -47,11 +47,15 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         if self.database_url_override:
             normalized_url = self.database_url_override.strip()
+            if normalized_url.startswith("postgres://"):
+                normalized_url = "postgresql://" + normalized_url[len("postgres://"):]
+            if normalized_url.startswith("postgresql://"):
+                normalized_url = "postgresql+psycopg2://" + normalized_url[len("postgresql://"):]
             if normalized_url.startswith("mysql://"):
                 normalized_url = "mysql+pymysql://" + normalized_url[len("mysql://"):]
             return normalized_url
 
-        return f"mysql+pymysql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+        return f"postgresql+psycopg2://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
     class Config:
         env_file = ".env"

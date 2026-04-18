@@ -173,7 +173,7 @@ const GestionHabitaciones: React.FC = () => {
                     <span className={getStatusClass(hab.tipo)}>{getRoomTypeLabel(hab.tipo)}</span>
                   </td>
                   <td style={{ color: 'var(--text)' }}>{hab.capacidad}</td>
-                  <td style={{ color: 'var(--gold)' }}>${hab.precio_noche}</td>
+                  <td style={{ color: 'var(--gold)' }}>S/. {hab.precio_noche}</td>
                   <td>
                     <span className={getStatusClass(hab.estado)}>{hab.estado}</span>
                   </td>

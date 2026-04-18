@@ -66,7 +66,7 @@ const MisPagos: React.FC = () => {
                     <td style={{ color: 'var(--text)', textTransform: 'capitalize' }}>{pago.metodo}</td>
                     <td><span className={getStatusClass(pago.estado)}>{pago.estado}</span></td>
                     <td style={{ color: 'var(--gold)' }}>
-                      {pago.moneda} {asNumber(pago.monto).toFixed(2)}
+                      S/. {asNumber(pago.monto).toFixed(2)}
                     </td>
                   </tr>
                 ))}

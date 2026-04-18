@@ -212,7 +212,7 @@ const MisReservas: React.FC = () => {
                         <td>
                           <span className={getStatusClass(reserva.estado)}>{getEstadoLabel(reserva.estado)}</span>
                         </td>
-                        <td style={{ color: 'var(--gold)' }}>${asNumber(reserva.total).toFixed(2)}</td>
+                        <td style={{ color: 'var(--gold)' }}>S/. {asNumber(reserva.total).toFixed(2)}</td>
                         <td>
                           {reserva.estado === 'pendiente' ? (
                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -248,7 +248,7 @@ const MisReservas: React.FC = () => {
                                   <p style={{ margin: 0, color: 'var(--text)', fontWeight: 600 }}>Información de la habitación</p>
                                   <p style={{ margin: 0, color: 'var(--muted)' }}>Tipo: <span style={{ color: 'var(--text)' }}>{habitacion.tipo}</span></p>
                                   <p style={{ margin: 0, color: 'var(--muted)' }}>Capacidad: <span style={{ color: 'var(--text)' }}>{habitacion.capacidad} huésped(es)</span></p>
-                                  <p style={{ margin: 0, color: 'var(--muted)' }}>Precio por noche: <span style={{ color: 'var(--gold)' }}>${asNumber(habitacion.precio_noche).toFixed(2)}</span></p>
+                                  <p style={{ margin: 0, color: 'var(--muted)' }}>Precio por noche: <span style={{ color: 'var(--gold)' }}>S/. {asNumber(habitacion.precio_noche).toFixed(2)}</span></p>
                                   {habitacion.descripcion && (
                                     <p style={{ margin: 0, color: 'var(--muted)' }}>Descripción: <span style={{ color: 'var(--text)' }}>{habitacion.descripcion}</span></p>
                                   )}

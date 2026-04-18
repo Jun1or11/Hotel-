@@ -113,7 +113,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ habitacion, onReservar, isReservada
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ color: 'var(--muted)' }}>Precio/noche:</span>
             <span style={{ color: 'var(--gold)', fontWeight: 600 }}>
-              ${habitacion.precio_noche}
+              S/. {habitacion.precio_noche}
             </span>
           </div>
 

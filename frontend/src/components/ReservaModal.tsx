@@ -329,12 +329,12 @@ const ReservaModal: React.FC<ReservaModalProps> = ({ habitacion, onClose, onConf
             <div className="panel" style={{ padding: '0.8rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: 'var(--muted)' }}>Precio por noche:</span>
-                <span style={{ color: 'var(--gold)' }}>${habitacion.precio_noche}</span>
+                <span style={{ color: 'var(--gold)' }}>S/. {habitacion.precio_noche}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
                 <span style={{ color: 'var(--muted)' }}>Total:</span>
                 <span style={{ color: 'var(--gold)', fontSize: '1.6rem', fontWeight: 700 }}>
-                  ${total.toFixed(2)}
+                  S/. {total.toFixed(2)}
                 </span>
               </div>
             </div>

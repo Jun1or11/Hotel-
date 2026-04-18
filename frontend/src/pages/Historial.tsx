@@ -89,7 +89,7 @@ const Historial: React.FC = () => {
                       </span>
                     </td>
                     <td style={{ color: 'var(--gold)' }}>
-                      ${asNumber(reserva.total).toFixed(2)}
+                      S/. {asNumber(reserva.total).toFixed(2)}
                     </td>
                   </tr>
                 ))}

@@ -166,7 +166,7 @@ const Dashboard: React.FC = () => {
               Ingresos del Mes
             </p>
             <p style={{ color: 'var(--green)', fontSize: '2rem', fontWeight: 700 }}>
-              ${stats?.ingresos_mes?.toFixed(2) ?? '0.00'}
+              S/. {stats?.ingresos_mes?.toFixed(2) ?? '0.00'}
             </p>
           </div>
         </div>
@@ -213,7 +213,7 @@ const Dashboard: React.FC = () => {
                     </span>
                   </td>
                   <td style={{ color: 'var(--gold)' }}>
-                    ${Number(res.total ?? 0).toFixed(2)}
+                    S/. {Number(res.total ?? 0).toFixed(2)}
                   </td>
                 </tr>
               ))}

@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     frontend_url: str = "http://localhost:5173"
     mercadopago_currency_id: str = "PEN"
     backend_url: str = ""
+    database_url_override: str = Field(
+        default="",
+        validation_alias=AliasChoices("DATABASE_URL", "database_url"),
+    )
     smtp_host: str = ""
     smtp_port: int = 587
     smtp_user: str = ""
@@ -41,6 +45,12 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
+        if self.database_url_override:
+            normalized_url = self.database_url_override.strip()
+            if normalized_url.startswith("mysql://"):
+                normalized_url = "mysql+pymysql://" + normalized_url[len("mysql://"):]
+            return normalized_url
+
         return f"mysql+pymysql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
     class Config:

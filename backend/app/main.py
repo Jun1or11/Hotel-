@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import get_settings
 from app.routers import auth, dashboard, habitaciones, notificaciones, pagos, reservas, resenas, usuarios
 from app.database import init_db
+
+settings = get_settings()
 
 # Crear aplicación FastAPI
 app = FastAPI(
@@ -19,7 +22,7 @@ def startup_event() -> None:
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[settings.frontend_url, "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

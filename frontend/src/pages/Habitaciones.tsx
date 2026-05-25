@@ -82,7 +82,7 @@ const Habitaciones: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
+      <div className="app-shell habitaciones-page">
         <Navbar />
         <div className="app-container">
           <p style={{ color: 'var(--text)' }}>Cargando habitaciones...</p>
@@ -92,7 +92,7 @@ const Habitaciones: React.FC = () => {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell habitaciones-page">
       <Navbar />
       <div className="app-container">
         <h1 className="page-title">

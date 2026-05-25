@@ -40,15 +40,15 @@ const getRoomLabel = (tipo: string): string => {
 const getRoomColor = (tipo: string): string => {
   switch (tipo) {
     case 'estandar':
-      return 'linear-gradient(135deg, #1C1C1F 0%, #2A2A2F 100%)';
+      return 'var(--room-card-estandar)';
     case 'familiar':
-      return 'linear-gradient(135deg, #2A3F2A 0%, #1C2A1C 100%)';
+      return 'var(--room-card-familiar)';
     case 'matrimonial':
-      return 'linear-gradient(135deg, #3F3A2A 0%, #2A251C 100%)';
+      return 'var(--room-card-matrimonial)';
     case 'suite':
-      return 'linear-gradient(135deg, #4A3C2A 0%, #2A2015 100%)';
+      return 'var(--room-card-suite)';
     default:
-      return 'linear-gradient(135deg, #1C1C1F 0%, #2A2A2F 100%)';
+      return 'var(--room-card-estandar)';
   }
 };
 

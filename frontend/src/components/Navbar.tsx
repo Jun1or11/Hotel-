@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
           zIndex: 100,
           borderBottom: '1px solid var(--border)',
           backdropFilter: 'blur(10px)',
-          background: 'rgba(20, 20, 22, 0.9)',
+          background: 'var(--navbar-background)',
         }}
       >
         <div

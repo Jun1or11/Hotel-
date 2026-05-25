@@ -73,7 +73,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, userName }) =>
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backgroundColor: 'var(--modal-overlay)',
         display: 'grid',
         placeItems: 'center',
         zIndex: 300,

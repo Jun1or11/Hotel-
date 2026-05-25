@@ -46,8 +46,7 @@ const Inicio: React.FC = () => {
     <div
       className="app-shell"
       style={{
-        backgroundImage:
-          "linear-gradient(180deg, rgba(10, 10, 12, 0.78) 0%, rgba(10, 10, 12, 0.9) 100%), url('https://images.unsplash.com/photo-1517840901100-8179e982acb7?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+        backgroundImage: 'var(--home-page-background)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -62,8 +61,7 @@ const Inicio: React.FC = () => {
             padding: '1.6rem',
             display: 'grid',
             gap: 14,
-            background:
-              'linear-gradient(135deg, rgba(200, 169, 110, 0.18) 0%, rgba(28, 28, 31, 0.95) 34%, rgba(20, 20, 22, 0.98) 100%)',
+            background: 'var(--hero-panel-background)',
           }}
         >
           <p

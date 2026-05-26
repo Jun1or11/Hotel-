@@ -46,8 +46,8 @@ const Auth: React.FC = () => {
     setError('');
     setLoading(true);
     try {
-      await login(email.trim().toLowerCase(), password);
-      navigate('/');
+      const user = await login(email.trim().toLowerCase(), password);
+      navigate(user.rol === 'admin' ? '/admin/dashboard' : '/', { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Error al iniciar sesión');
     } finally {
@@ -67,8 +67,8 @@ const Auth: React.FC = () => {
 
     setLoading(true);
     try {
-      await register(dni.trim(), nombre.trim(), normalizedEmail, password);
-      navigate('/');
+      const user = await register(dni.trim(), nombre.trim(), normalizedEmail, password);
+      navigate(user.rol === 'admin' ? '/admin/dashboard' : '/', { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Error al registrarse');
     } finally {

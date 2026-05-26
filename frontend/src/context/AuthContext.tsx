@@ -6,8 +6,8 @@ interface AuthContextType {
   user: Usuario | null;
   token: string | null;
   authLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (dni: string, nombre: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<Usuario>;
+  register: (dni: string, nombre: string, email: string, password: string) => Promise<Usuario>;
   updateProfile: (payload: {
     dni?: string;
     nombre?: string;
@@ -70,6 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(user);
       localStorage.setItem('token', newToken);
       localStorage.setItem('user', JSON.stringify(user));
+      return user;
     } catch (error) {
       throw error;
     }
@@ -85,7 +86,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } as RegisterRequest);
 
       // El backend devuelve solo usuario en /register; autenticamos luego con /login.
-      await login(email, password);
+      return await login(email, password);
     } catch (error) {
       throw error;
     }

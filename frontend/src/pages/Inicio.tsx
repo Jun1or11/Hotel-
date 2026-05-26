@@ -46,6 +46,9 @@ const Inicio: React.FC = () => {
     <div
       className="app-shell"
       style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
         backgroundImage: 'var(--home-page-background)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -54,7 +57,7 @@ const Inicio: React.FC = () => {
       }}
     >
       <Navbar />
-      <div className="app-container">
+      <div className="app-container" style={{ flex: 1 }}>
         <section
           className="panel"
           style={{
@@ -122,6 +125,43 @@ const Inicio: React.FC = () => {
           )}
         </section>
       </div>
+
+      <footer
+        style={{
+          width: '100%',
+          marginTop: 'auto',
+          padding: '1rem 0',
+          borderTop: '1px solid var(--border)',
+          background: 'rgba(20, 20, 22, 0.96)',
+          backdropFilter: 'blur(8px)',
+        }}
+      >
+        <div
+          className="app-container"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 12,
+            flexWrap: 'wrap',
+            paddingTop: 0,
+            paddingBottom: 0,
+          }}
+        >
+          <div>
+            <p style={{ color: 'var(--gold)', fontWeight: 700, marginBottom: 4 }}>
+              Hotel Nova
+            </p>
+            <p style={{ color: 'var(--muted)', fontSize: '.92rem' }}>
+              Correo: hotelnovacorreo11@gmail.com
+            </p>
+          </div>
+
+          <p style={{ color: 'var(--muted)', fontSize: '.92rem', textAlign: 'right' }}>
+            © {new Date().getFullYear()} Hotel Nova. Todos los derechos reservados.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

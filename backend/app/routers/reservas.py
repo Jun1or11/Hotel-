@@ -162,13 +162,17 @@ def _queue_reserva_confirmation_email(background_tasks: BackgroundTasks, db: Ses
 @router.post("", response_model=ReservaResponse)
 def create_new_reserva(
     reserva: ReservaCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(get_current_user)
 ):
     """
-    Crea una nueva reserva para el usuario actual.
+    Crea una nueva reserva para el usuario actual y encola correo de confirmacion.
     """
-    return create_reserva(db, reserva, current_user.id)
+    db_reserva = create_reserva(db, reserva, current_user.id)
+    # Encolar correo de confirmacion (si el usuario tiene email y SMTP está configurado)
+    _queue_reserva_confirmation_email(background_tasks, db, db_reserva)
+    return db_reserva
 
 
 @router.post("/{reserva_id}/pagar")

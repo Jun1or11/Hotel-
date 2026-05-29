@@ -11,12 +11,19 @@ const getEstadoLabel = (estado: string) => (estado === 'activo' ? 'Comprado' : e
 
 type PaymentGateway = 'mercadopago' | 'paypal' | 'tarjeta' | 'visa' | 'yape';
 
-const paymentOptions: Array<{ id: PaymentGateway; label: string; description: string; enabled: boolean }> = [
-  { id: 'mercadopago', label: 'Mercado Pago', description: 'Pago en línea inmediato', enabled: true },
-  { id: 'paypal', label: 'PayPal', description: 'Próximamente', enabled: false },
-  { id: 'tarjeta', label: 'Tarjeta de crédito', description: 'Próximamente', enabled: false },
-  { id: 'visa', label: 'Visa', description: 'Próximamente', enabled: false },
-  { id: 'yape', label: 'Yape', description: 'Próximamente', enabled: false },
+const paymentOptions: Array<{
+  id: PaymentGateway;
+  label: string;
+  description: string;
+  enabled: boolean;
+  badge: string;
+  accent: 'gold' | 'muted';
+}> = [
+  { id: 'mercadopago', label: 'Mercado Pago', description: 'Pago en línea inmediato', enabled: true, badge: 'Disponible ahora', accent: 'gold' },
+  { id: 'paypal', label: 'PayPal', description: 'Próximamente', enabled: false, badge: 'Próximamente', accent: 'muted' },
+  { id: 'tarjeta', label: 'Tarjeta de crédito', description: 'Próximamente', enabled: false, badge: 'Próximamente', accent: 'muted' },
+  { id: 'visa', label: 'Visa', description: 'Próximamente', enabled: false, badge: 'Próximamente', accent: 'muted' },
+  { id: 'yape', label: 'Yape', description: 'Próximamente', enabled: false, badge: 'Próximamente', accent: 'muted' },
 ];
 
 const MisReservas: React.FC = () => {
@@ -274,10 +281,10 @@ const MisReservas: React.FC = () => {
 
       {showPaymentModal && (
         <div
+          className="payment-modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.62)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -285,75 +292,95 @@ const MisReservas: React.FC = () => {
             zIndex: 1100,
           }}
         >
-          <div className="panel" style={{ width: '100%', maxWidth: 520, padding: '1.1rem' }}>
-            <h2 style={{ color: 'var(--gold)', marginBottom: 10 }}>Seleccionar pasarela de pago</h2>
-            <p style={{ color: 'var(--muted)', marginBottom: 10, fontSize: '.88rem' }}>
-              Elige cómo deseas confirmar tu reserva.
+          <div className="panel payment-modal" style={{ width: '100%', maxWidth: 640 }}>
+            <div className="payment-modal-hero">
+              <div>
+                <p className="payment-modal-kicker">Confirmación de reserva</p>
+                <h2 style={{ color: 'var(--text)', margin: '0.15rem 0 0' }}>Seleccionar pasarela de pago</h2>
+              </div>
+              <div className="payment-modal-hero-chip">1 paso para continuar</div>
+            </div>
+
+            <p style={{ color: 'var(--muted)', margin: '0 0 1rem', fontSize: '.94rem' }}>
+              Elige una pasarela segura para confirmar tu reserva. Por ahora solo Mercado Pago está habilitado.
             </p>
 
-            <div style={{ display: 'grid', gap: 8 }}>
+            <div className="payment-method-grid">
               {paymentOptions.map((option) => (
                 <label
                   key={option.id}
+                  className={[
+                    'payment-method-card',
+                    selectedPaymentMethod === option.id ? 'is-selected' : '',
+                    !option.enabled ? 'is-disabled' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    border: `1px solid ${selectedPaymentMethod === option.id ? 'var(--gold)' : 'var(--border)'}`,
-                    borderRadius: 10,
-                    padding: '0.55rem 0.65rem',
-                    background: selectedPaymentMethod === option.id ? 'rgba(200, 169, 110, 0.08)' : 'transparent',
-                    opacity: option.enabled ? 1 : 0.7,
-                    cursor: 'pointer',
+                    opacity: option.enabled ? 1 : 0.75,
                   }}
                 >
-                  <input
-                    type="radio"
-                    name="payment-method"
-                    checked={selectedPaymentMethod === option.id}
-                    onChange={() => setSelectedPaymentMethod(option.id)}
-                  />
-                  <div>
-                    <p style={{ margin: 0, color: 'var(--text)', fontWeight: 600 }}>{option.label}</p>
-                    <p style={{ margin: 0, color: 'var(--muted)', fontSize: '.8rem' }}>{option.description}</p>
+                  <div className="payment-method-topline">
+                    <div className="payment-method-icon" aria-hidden="true">
+                      {option.id === 'mercadopago' ? 'MP' : option.label.slice(0, 1)}
+                    </div>
+                    <div className="payment-method-meta">
+                      <p style={{ margin: 0, color: 'var(--text)', fontWeight: 700 }}>{option.label}</p>
+                      <p style={{ margin: 0, color: 'var(--muted)', fontSize: '.84rem' }}>{option.description}</p>
+                    </div>
+                    <span className={`payment-method-badge ${option.accent === 'gold' ? 'is-gold' : ''}`}>
+                      {option.badge}
+                    </span>
+                  </div>
+                  <div className="payment-method-footer">
+                    <input
+                      type="radio"
+                      name="payment-method"
+                      checked={selectedPaymentMethod === option.id}
+                      disabled={!option.enabled}
+                      onChange={() => setSelectedPaymentMethod(option.id)}
+                    />
+                    <span style={{ color: 'var(--muted)', fontSize: '.8rem' }}>
+                      {option.enabled ? 'Seleccionar este método' : 'Bloqueado hasta su lanzamiento'}
+                    </span>
                   </div>
                 </label>
               ))}
             </div>
 
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, color: 'var(--text)' }}>
-              <input
-                type="checkbox"
-                checked={rememberPaymentMethod}
-                onChange={(e) => setRememberPaymentMethod(e.target.checked)}
-              />
-              Usar este método por defecto la próxima vez
-            </label>
+            <div className="payment-modal-footer">
+              <label className="payment-default-toggle">
+                <input
+                  type="checkbox"
+                  checked={rememberPaymentMethod}
+                  onChange={(e) => setRememberPaymentMethod(e.target.checked)}
+                />
+                <span>
+                  <strong>Usar este método por defecto</strong>
+                  <small>Se guardará para la próxima reserva</small>
+                </span>
+              </label>
+
+              <div className="payment-modal-actions">
+                <button className="btn-ghost" onClick={closePaymentGatewayModal}>
+                  Cancelar
+                </button>
+                <button className="btn-primary" onClick={confirmPaymentGateway}>
+                  Continuar
+                </button>
+              </div>
+            </div>
 
             {paymentModalError && (
               <div
+                className="payment-modal-error"
                 style={{
-                  marginTop: 10,
-                  padding: '0.55rem 0.65rem',
-                  borderRadius: 10,
-                  border: '1px solid rgba(224, 82, 82, 0.35)',
-                  backgroundColor: 'rgba(224, 82, 82, 0.1)',
-                  color: 'var(--red)',
-                  fontSize: '.86rem',
+                  marginTop: 0,
                 }}
               >
                 {paymentModalError}
               </div>
             )}
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 14 }}>
-              <button className="btn-primary" onClick={confirmPaymentGateway}>
-                Continuar
-              </button>
-              <button className="btn-ghost" onClick={closePaymentGatewayModal}>
-                Cancelar
-              </button>
-            </div>
           </div>
         </div>
       )}

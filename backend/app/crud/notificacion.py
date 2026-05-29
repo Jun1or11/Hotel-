@@ -76,6 +76,8 @@ def mark_all_as_read(db: Session, *, usuario_id: int) -> int:
 
 
 def clear_user_notificaciones(db: Session, *, usuario_id: int) -> int:
-    deleted = db.query(Notificacion).filter(Notificacion.usuario_id == usuario_id).delete(synchronize_session=False)
-    db.commit()
-    return deleted
+    return (
+        db.query(Notificacion)
+        .filter(Notificacion.usuario_id == usuario_id)
+        .count()
+    )

@@ -88,8 +88,8 @@ def clear_notificaciones(
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(get_current_user),
 ):
-    deleted = clear_user_notificaciones(db, usuario_id=current_user.id)
-    return {"deleted": deleted}
+    total = clear_user_notificaciones(db, usuario_id=current_user.id)
+    return {"cleared": total}
 
 
 @router.post("/enviar", response_model=NotificacionSendResponse)

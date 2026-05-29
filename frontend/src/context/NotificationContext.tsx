@@ -30,6 +30,16 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuthContext();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const clearedAtStorageKey = user ? `notifications_cleared_at_${user.id}` : null;
+
+  const getClearedAt = useCallback(() => {
+    if (!clearedAtStorageKey) {
+      return null;
+    }
+
+    const value = localStorage.getItem(clearedAtStorageKey);
+    return value ? new Date(value) : null;
+  }, [clearedAtStorageKey]);
 
   const refreshNotifications = useCallback(async () => {
     if (!user || user.rol === 'admin') {
@@ -38,14 +48,15 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
 
     const response = await axiosInstance.get<NotificationApiResponse[]>('/api/notificaciones/mis-notificaciones');
+    const clearedAt = getClearedAt();
     const parsed = response.data.map((item) => ({
       id: item.id,
       message: item.mensaje,
       read: item.leida,
       timestamp: new Date(item.fecha_creacion),
     }));
-    setNotifications(parsed);
-  }, [user]);
+    setNotifications(clearedAt ? parsed.filter((item) => item.timestamp > clearedAt) : parsed);
+  }, [getClearedAt, user]);
 
   useEffect(() => {
     refreshNotifications().catch((error) => {
@@ -68,11 +79,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [refreshNotifications, user]);
 
   const clearNotifications = useCallback(() => {
-    axiosInstance.delete('/api/notificaciones/limpiar').catch((error) => {
-      console.error('Error clearing notifications:', error);
-    });
+    if (clearedAtStorageKey) {
+      localStorage.setItem(clearedAtStorageKey, new Date().toISOString());
+    }
+
     setNotifications([]);
-  }, []);
+  }, [clearedAtStorageKey]);
 
   const markAsRead = useCallback((id: number) => {
     axiosInstance.put(`/api/notificaciones/${id}/leer`).catch((error) => {

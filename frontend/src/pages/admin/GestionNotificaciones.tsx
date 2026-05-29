@@ -71,7 +71,11 @@ const GestionNotificaciones: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (template === 'custom') return;
+    if (template === 'custom') {
+      setMensaje('');
+      return;
+    }
+
     setMensaje(templateDefaults[template]);
   }, [template]);
 

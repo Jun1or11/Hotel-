@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../../components/Navbar';
 import { Usuario } from '../../types/index';
 import axiosInstance from '../../api/axios';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const getStatusClass = (status: string) => `status-chip status-${status}`;
 
@@ -48,19 +48,15 @@ const GestionUsuarios: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
-        <Navbar />
-        <div className="app-container">
-          <p style={{ color: 'var(--text)' }}>Cargando usuarios...</p>
-        </div>
-      </div>
+      <AdminLayout>
+        <p style={{ color: 'var(--text)' }}>Cargando usuarios...</p>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="app-shell">
-      <Navbar />
-      <div className="app-container">
+    <AdminLayout>
+      <div className="admin-page-stack">
         <h1 className="page-title">Gestión de Usuarios</h1>
 
         <div className="panel table-wrap">
@@ -116,7 +112,7 @@ const GestionUsuarios: React.FC = () => {
           </table>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Navbar from '../../components/Navbar';
 import axiosInstance from '../../api/axios';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 type NotificationTarget = 'all' | 'single';
 type NotificationTemplate = 'custom' | 'salida_24h' | 'estadia_hoy' | 'pago_pendiente';
@@ -110,19 +110,15 @@ const GestionNotificaciones: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
-        <Navbar />
-        <div className="app-container">
-          <p style={{ color: 'var(--text)' }}>Cargando notificaciones...</p>
-        </div>
-      </div>
+      <AdminLayout>
+        <p style={{ color: 'var(--text)' }}>Cargando notificaciones...</p>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="app-shell">
-      <Navbar />
-      <div className="app-container">
+    <AdminLayout>
+      <div className="admin-page-stack">
         <h1 className="page-title">Notificaciones Enviadas</h1>
 
         <div className="panel" style={{ padding: '1rem', marginBottom: 16 }}>
@@ -250,7 +246,7 @@ const GestionNotificaciones: React.FC = () => {
           </table>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

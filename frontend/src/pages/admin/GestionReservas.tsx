@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../../components/Navbar';
 import { Reserva } from '../../types/index';
 import axiosInstance from '../../api/axios';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const getStatusClass = (status: string) => `status-chip status-${status}`;
 const formatReservaId = (id: string | number) => {
@@ -42,12 +42,9 @@ const GestionReservas: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
-        <Navbar />
-        <div className="app-container">
-          <p style={{ color: 'var(--text)' }}>Cargando reservas...</p>
-        </div>
-      </div>
+      <AdminLayout>
+        <p style={{ color: 'var(--text)' }}>Cargando reservas...</p>
+      </AdminLayout>
     );
   }
 
@@ -113,9 +110,8 @@ const GestionReservas: React.FC = () => {
   );
 
   return (
-    <div className="app-shell">
-      <Navbar />
-      <div className="app-container">
+    <AdminLayout>
+      <div className="admin-page-stack">
         <h1 className="page-title">Gestión de Reservas</h1>
 
         {/* Reservas Activas y Pendientes */}
@@ -174,7 +170,7 @@ const GestionReservas: React.FC = () => {
           </table>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

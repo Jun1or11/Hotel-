@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../../components/Navbar';
 import { Habitacion } from '../../types/index';
 import axiosInstance from '../../api/axios';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const getAmenidadesText = (amenidades: Habitacion['amenidades']) => {
   if (!amenidades) return '';
@@ -142,19 +142,15 @@ const GestionHabitaciones: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
-        <Navbar />
-        <div className="app-container">
-          <p style={{ color: 'var(--text)' }}>Cargando habitaciones...</p>
-        </div>
-      </div>
+      <AdminLayout>
+        <p style={{ color: 'var(--text)' }}>Cargando habitaciones...</p>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="app-shell">
-      <Navbar />
-      <div className="app-container">
+    <AdminLayout>
+      <div className="admin-page-stack">
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 16 }}>
           <h1 className="page-title" style={{ marginBottom: 0 }}>
             Gestión de Habitaciones
@@ -324,7 +320,7 @@ const GestionHabitaciones: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

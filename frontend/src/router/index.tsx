@@ -13,6 +13,8 @@ import GestionHabitaciones from '../pages/admin/GestionHabitaciones';
 import GestionNotificaciones from '../pages/admin/GestionNotificaciones';
 import GestionReservas from '../pages/admin/GestionReservas';
 import GestionUsuarios from '../pages/admin/GestionUsuarios';
+import AdminPagos from '../pages/admin/AdminPagos';
+import AdminConfiguracion from '../pages/admin/AdminConfiguracion';
 import { useAuthContext } from '../context/AuthContext';
 
 const Router: React.FC = () => {
@@ -79,6 +81,14 @@ const Router: React.FC = () => {
         <Route
           path="/admin/usuarios"
           element={<ProtectedRoute component={<GestionUsuarios />} requireAdmin />}
+        />
+        <Route
+          path="/admin/pagos"
+          element={<ProtectedRoute component={<AdminPagos />} requireAdmin />}
+        />
+        <Route
+          path="/admin/configuracion"
+          element={<ProtectedRoute component={<AdminConfiguracion />} requireAdmin />}
         />
 
         <Route path="*" element={<Navigate to={token ? (user?.rol === 'admin' ? '/admin/dashboard' : '/') : '/'} replace />} />

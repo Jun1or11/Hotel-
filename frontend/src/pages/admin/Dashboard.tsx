@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
 import axiosInstance from '../../api/axios';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 interface DashboardStats {
   total_habitaciones: number;
@@ -119,19 +119,15 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
-        <Navbar />
-        <div className="app-container">
-          <p style={{ color: 'var(--text)' }}>Cargando dashboard...</p>
-        </div>
-      </div>
+      <AdminLayout>
+        <p style={{ color: 'var(--text)' }}>Cargando dashboard...</p>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="app-shell">
-      <Navbar />
-      <div className="app-container">
+    <AdminLayout>
+      <div className="admin-page-stack">
         <h1 className="page-title">
           Dashboard de Administración
         </h1>
@@ -350,7 +346,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

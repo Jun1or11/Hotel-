@@ -46,22 +46,25 @@ ADMIN_PASSWORD = "Promocion135"
 
 SEED_USERS = [
     {
-        "nombre": "Ana Torres",
-        "email": "ana@hotelnova.com",
+        "nombre": "Ana Torres Ramirez",
+        "email": "ana.torres@gmail.com",
         "password": "Ana12345",
         "rol": RolEnum.huesped,
+        "dni": "71234567",
     },
     {
-        "nombre": "Luis Perez",
-        "email": "luis@hotelnova.com",
+        "nombre": "Luis Perez Gutierrez",
+        "email": "luis.perez@gmail.com",
         "password": "Luis12345",
         "rol": RolEnum.huesped,
+        "dni": "72345678",
     },
     {
-        "nombre": "Maria Gomez",
-        "email": "maria@hotelnova.com",
+        "nombre": "Maria Gomez Sanchez",
+        "email": "maria.gomez@gmail.com",
         "password": "Maria12345",
         "rol": RolEnum.huesped,
+        "dni": "73456789",
     },
 ]
 
@@ -231,64 +234,72 @@ SEED_ROOMS = [
     },
 ]
 
+
 SEED_PAID_RESERVATIONS = [
     {
-        "user_email": "ana@hotelnova.com",
+        "user_email": "ana.torres@gmail.com",
         "room_number": "201",
-        "checkin": date(2026, 4, 18),
-        "checkout": date(2026, 4, 20),
-        "num_huespedes": 2,
-        "metodo": MetodoPagoEnum.tarjeta,
-        "referencia": "SEED-ANA-201-20260418",
-        "solicitudes": "Check-in temprano y salida flexible",
-    },
-    {
-        "user_email": "luis@hotelnova.com",
-        "room_number": "302",
-        "checkin": date(2026, 4, 21),
-        "checkout": date(2026, 4, 24),
-        "num_huespedes": 3,
-        "metodo": MetodoPagoEnum.transferencia,
-        "referencia": "SEED-LUIS-302-20260421",
-        "solicitudes": "Cuna adicional",
-    },
-    {
-        "user_email": "maria@hotelnova.com",
-        "room_number": "401",
-        "checkin": date(2026, 4, 26),
-        "checkout": date(2026, 4, 29),
+        "checkin": date(2026, 5, 30),
+        "checkout": date(2026, 6, 1),
         "num_huespedes": 2,
         "metodo": MetodoPagoEnum.mercadopago,
-        "referencia": "SEED-MARIA-401-20260426",
-        "solicitudes": "Vista exterior",
+        "referencia": "SEED-ANA-201-20260530",
+        "solicitudes": "Check-in temprano",
+    },
+    {
+        "user_email": "luis.perez@gmail.com",
+        "room_number": "301",
+        "checkin": date(2026, 5, 31),
+        "checkout": date(2026, 6, 2),
+        "num_huespedes": 3,
+        "metodo": MetodoPagoEnum.tarjeta,
+        "referencia": "SEED-LUIS-301-20260531",
+        "solicitudes": "Necesitan cuna",
+    },
+    {
+        "user_email": "maria.gomez@gmail.com",
+        "room_number": "401",
+        "checkin": date(2026, 6, 1),
+        "checkout": date(2026, 6, 3),
+        "num_huespedes": 2,
+        "metodo": MetodoPagoEnum.transferencia,
+        "referencia": "SEED-MARIA-401-20260601",
+        "solicitudes": "Preferencia por piso alto",
     },
 ]
 
 SEED_REVIEWS = [
     {
-        "user_email": "ana@hotelnova.com",
+        "user_email": "ana.torres@gmail.com",
         "puntuacion": 5,
         "comentario": "Excelente atencion en recepcion y la habitacion estuvo impecable. Volveria sin duda.",
     },
     {
-        "user_email": "luis@hotelnova.com",
+        "user_email": "luis.perez@gmail.com",
         "puntuacion": 4,
         "comentario": "La estadia fue muy buena. La limpieza y el descanso estuvieron a la altura.",
     },
     {
-        "user_email": "maria@hotelnova.com",
+        "user_email": "maria.gomez@gmail.com",
         "puntuacion": 5,
         "comentario": "Muy comodo, buena vista y excelente servicio. Recomendado para familias.",
     },
 ]
 
 
-def upsert_user(db, *, nombre: str, email: str, password: str, rol: RolEnum) -> tuple[str, Usuario]:
+def upsert_user(db, *, nombre: str, email: str, password: str, rol: RolEnum, dni: str | None = None) -> tuple[str, Usuario]:
     normalized_email = email.strip().lower()
-    existing = db.query(Usuario).filter(Usuario.email == normalized_email).first()
+
+    # Buscar por email o dni (si se proporcionó) para evitar insertar duplicados
+    if dni:
+        existing = db.query(Usuario).filter((Usuario.email == normalized_email) | (Usuario.dni == dni)).first()
+    else:
+        existing = db.query(Usuario).filter(Usuario.email == normalized_email).first()
 
     if existing:
         existing.nombre = nombre
+        existing.email = normalized_email
+        existing.dni = dni or existing.dni
         existing.password_hash = hash_password(password)
         existing.rol = rol
         existing.activo = True
@@ -297,6 +308,7 @@ def upsert_user(db, *, nombre: str, email: str, password: str, rol: RolEnum) -> 
 
     user = Usuario(
         nombre=nombre,
+        dni=dni,
         email=normalized_email,
         password_hash=hash_password(password),
         rol=rol,

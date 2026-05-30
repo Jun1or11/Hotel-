@@ -82,7 +82,19 @@ const Habitaciones: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell habitaciones-page">
+      <div
+        className="app-shell habitaciones-page"
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundImage: 'var(--home-page-background)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+        }}
+      >
         <Navbar />
         <div className="app-container">
           <p style={{ color: 'var(--text)' }}>Cargando habitaciones...</p>
@@ -92,7 +104,19 @@ const Habitaciones: React.FC = () => {
   }
 
   return (
-    <div className="app-shell habitaciones-page">
+    <div
+      className="app-shell habitaciones-page"
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundImage: 'var(--home-page-background)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       <Navbar />
       <div className="app-container">
         <h1 className="page-title">

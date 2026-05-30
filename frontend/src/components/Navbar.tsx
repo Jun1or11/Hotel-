@@ -123,24 +123,35 @@ const Navbar: React.FC = () => {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {!isAdmin() && (
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      setShowReviewModal(true);
-                    }}
-                    title="Dejar reseña"
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 9,
-                      border: '1px solid var(--border)',
-                      backgroundColor: 'var(--surface2)',
-                      color: 'var(--gold)',
-                      fontSize: '.95rem',
-                    }}
-                  >
-                    ★
-                  </button>
+                  <div style={{ position: 'relative' }}>
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setShowReviewModal((current) => !current);
+                      }}
+                      title="Dejar reseña"
+                      style={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: 9,
+                        border: '1px solid var(--border)',
+                        backgroundColor: 'var(--surface2)',
+                        color: 'var(--gold)',
+                        fontSize: '.95rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      ★
+                    </button>
+
+                    <ReviewModal
+                      open={showReviewModal}
+                      onClose={() => setShowReviewModal(false)}
+                      userName={user.nombre}
+                    />
+                  </div>
                 )}
 
                 {!isAdmin() && <NotificationBell />}
@@ -255,13 +266,6 @@ const Navbar: React.FC = () => {
         </div>
       </nav>
 
-      {user && !isAdmin() && (
-        <ReviewModal
-          open={showReviewModal}
-          onClose={() => setShowReviewModal(false)}
-          userName={user.nombre}
-        />
-      )}
     </>
   );
 };

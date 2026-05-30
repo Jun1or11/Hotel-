@@ -161,7 +161,19 @@ const MisReservas: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
+      <div
+        className="app-shell"
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundImage: 'var(--home-page-background)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+        }}
+      >
         <Navbar />
         <div className="app-container">
           <p style={{ color: 'var(--text)' }}>Cargando reservas...</p>
@@ -171,7 +183,19 @@ const MisReservas: React.FC = () => {
   }
 
   return (
-    <div className="app-shell">
+    <div
+      className="app-shell"
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundImage: 'var(--home-page-background)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       <Navbar />
       <div className="app-container">
         <h1 className="page-title">Mis Reservas</h1>

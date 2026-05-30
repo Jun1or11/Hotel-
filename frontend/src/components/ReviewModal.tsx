@@ -71,26 +71,25 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, userName }) =>
   return (
     <div
       style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'var(--modal-overlay)',
-        display: 'grid',
-        placeItems: 'center',
+        position: 'absolute',
+        top: 'calc(100% + 8px)',
+        right: 0,
         zIndex: 300,
-        padding: '1rem',
+        width: 'min(380px, calc(100vw - 1rem))',
       }}
     >
       <div
         className="panel"
         style={{
-          width: 'min(560px, 100%)',
-          padding: '1.2rem',
-          borderRadius: 16,
+          width: '100%',
+          padding: '0.95rem',
+          borderRadius: 14,
+          boxShadow: '0 18px 38px rgba(0, 0, 0, 0.22)',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8, alignItems: 'flex-start' }}>
           <div>
-            <h3 style={{ color: 'var(--gold)', marginBottom: 4 }}>Tu reseña</h3>
+            <h3 style={{ color: 'var(--gold)', marginBottom: 3, fontSize: '1.15rem' }}>Tu reseña</h3>
             <p style={{ color: 'var(--muted)', fontSize: '.9rem' }}>
               {userName}, califica tu experiencia del 1 al 5 y deja un comentario de mejora.
             </p>
@@ -111,23 +110,23 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, userName }) =>
         </div>
 
         {loadingCurrent ? (
-          <p style={{ color: 'var(--muted)', margin: '1rem 0' }}>Cargando tu reseña...</p>
+          <p style={{ color: 'var(--muted)', margin: '0.8rem 0' }}>Cargando tu reseña...</p>
         ) : (
           <form onSubmit={submitReview}>
-            <div style={{ display: 'flex', gap: 6, margin: '0.8rem 0 1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, margin: '0.7rem 0 0.9rem', flexWrap: 'wrap' }}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
                   style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 11,
                     border: rating >= star ? '1px solid var(--gold)' : '1px solid var(--border)',
                     background: rating >= star ? 'rgba(200, 169, 110, 0.2)' : 'var(--surface2)',
                     color: rating >= star ? 'var(--gold)' : 'var(--muted)',
-                    fontSize: '1.2rem',
+                    fontSize: '1.1rem',
                   }}
                   aria-label={`Seleccionar ${star} estrellas`}
                 >
@@ -136,12 +135,12 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, userName }) =>
               ))}
             </div>
 
-            <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.9rem' }}>
+            <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.86rem' }}>
               Comentario (opcional)
             </label>
             <textarea
               className="form-control"
-              rows={4}
+              rows={3}
               maxLength={500}
               placeholder="Ejemplo: Me gustaria mejorar el tiempo de respuesta en recepcion."
               value={comment}
@@ -180,16 +179,16 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, userName }) =>
               </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
               <button
                 type="button"
                 onClick={onClose}
                 className="btn-ghost"
-                style={{ padding: '0.5rem 0.85rem' }}
+                style={{ padding: '0.45rem 0.8rem' }}
               >
                 Cerrar
               </button>
-              <button type="submit" className="btn-primary" style={{ padding: '0.5rem 0.85rem' }} disabled={loading}>
+              <button type="submit" className="btn-primary" style={{ padding: '0.45rem 0.8rem' }} disabled={loading}>
                 {loading ? 'Guardando...' : 'Guardar reseña'}
               </button>
             </div>

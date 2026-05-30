@@ -1,3 +1,5 @@
+import re
+
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from datetime import datetime
 from typing import Optional
@@ -12,6 +14,25 @@ def _ensure_gmail_domain(email: str) -> str:
     return normalized_email
 
 
+_PASSWORD_ALLOWED_PATTERN = re.compile(r'^[A-Za-z0-9]+$')
+
+
+def _ensure_password_policy(password: str) -> str:
+    if len(password) < 7 or len(password) > 12:
+        raise ValueError('La contraseña debe tener entre 7 y 12 caracteres')
+
+    if not any(char.isupper() for char in password):
+        raise ValueError('La contraseña debe incluir al menos una mayúscula')
+
+    if not any(char.isdigit() for char in password):
+        raise ValueError('La contraseña debe incluir al menos un número')
+
+    if not _PASSWORD_ALLOWED_PATTERN.fullmatch(password):
+        raise ValueError('No se permiten signos. Solo se permiten letras y números')
+
+    return password
+
+
 class UsuarioCreate(BaseModel):
     """Schema para crear un usuario (registro)."""
     dni: str = Field(min_length=8, max_length=8)
@@ -23,6 +44,11 @@ class UsuarioCreate(BaseModel):
     @classmethod
     def validate_gmail_email(cls, value: EmailStr) -> str:
         return _ensure_gmail_domain(str(value))
+
+    @field_validator('password')
+    @classmethod
+    def validate_password_policy(cls, value: str) -> str:
+        return _ensure_password_policy(value)
 
 
 class UsuarioLogin(BaseModel):
@@ -67,7 +93,7 @@ class UsuarioSelfUpdate(BaseModel):
     nombre: Optional[str] = None
     email: Optional[EmailStr] = None
     current_password: Optional[str] = None
-    new_password: Optional[str] = Field(default=None, min_length=6)
+    new_password: Optional[str] = None
 
     @field_validator('email')
     @classmethod
@@ -75,6 +101,13 @@ class UsuarioSelfUpdate(BaseModel):
         if value is None:
             return value
         return _ensure_gmail_domain(str(value))
+
+    @field_validator('new_password')
+    @classmethod
+    def validate_password_policy(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return value
+        return _ensure_password_policy(value)
 
 
 class TokenResponse(BaseModel):

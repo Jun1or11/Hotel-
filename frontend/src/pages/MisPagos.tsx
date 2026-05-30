@@ -27,7 +27,19 @@ const MisPagos: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="app-shell">
+      <div
+        className="app-shell"
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundImage: 'var(--home-page-background)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+        }}
+      >
         <Navbar />
         <div className="app-container">
           <p style={{ color: 'var(--text)' }}>Cargando pagos...</p>
@@ -37,7 +49,19 @@ const MisPagos: React.FC = () => {
   }
 
   return (
-    <div className="app-shell">
+    <div
+      className="app-shell"
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundImage: 'var(--home-page-background)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       <Navbar />
       <div className="app-container">
         <h1 className="page-title">Mis Pagos</h1>

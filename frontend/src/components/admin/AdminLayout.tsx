@@ -15,8 +15,8 @@ const navItems: AdminNavItem[] = [
   { to: '/admin/reservas', label: 'Reservas', icon: 'reservations' },
   { to: '/admin/notificaciones', label: 'Notificaciones', icon: 'notifications' },
   { to: '/admin/usuarios', label: 'Usuarios', icon: 'users' },
-  { to: '/admin/pagos', label: 'Pagos', icon: 'payments', soon: true },
-  { to: '/admin/configuracion', label: 'Configuración', icon: 'settings', soon: true },
+  { to: '/admin/pagos', label: 'Pagos', icon: 'payments' },
+  { to: '/admin/configuracion', label: 'Configuración', icon: 'settings' },
 ];
 
 const ADMIN_SIDEBAR_STORAGE_KEY = 'hotelnova_admin_sidebar_collapsed';

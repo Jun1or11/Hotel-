@@ -29,6 +29,17 @@ const MONTHS = [
   'Diciembre',
 ];
 
+const DEFAULT_ROOM_IMAGES: Record<string, string> = {
+  estandar:
+    'https://bajainn.com/wp-content/uploads/2019/12/Mar-habitacion-Hotel-Cortez-seccion-ensenada.jpg',
+  matrimonial:
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRam0HpNHRExHkCZwGrW8W4KKiuy988NHtn5Q&s',
+  familiar:
+    'https://www.harlingfordhotel.com/wp-content/uploads/2023/09/sup-quad.jpg',
+  suite:
+    'https://fishhotels-sites.s3.eu-west-3.amazonaws.com/uploads/29ae8ed8-03e3-4fcf-a940-27b5b09f281a/originals/hvr-suite-premium-002.jpg',
+};
+
 const toIsoDate = (date: Date): string => {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
@@ -281,6 +292,25 @@ const ReservaModal: React.FC<ReservaModalProps> = ({ habitacion, onClose, onConf
 
         <div className="reserva-layout" style={{ marginBottom: 16 }}>
           <div style={{ display: 'grid', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <img
+                src={
+                  habitacion.imagen ||
+                  DEFAULT_ROOM_IMAGES[String(habitacion.tipo)] ||
+                  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=60'
+                }
+                alt={`Habitación ${habitacion.numero}`}
+                style={{ width: 160, height: 100, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,0,0,0.06)' }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <strong style={{ color: 'var(--text)' }}>
+                  {habitacion.tipo ? habitacion.tipo.charAt(0).toUpperCase() + habitacion.tipo.slice(1) : ''} — Hab. {habitacion.numero}
+                </strong>
+                {habitacion.descripcion && (
+                  <span style={{ color: 'var(--muted)', fontSize: '.9rem' }}>{habitacion.descripcion}</span>
+                )}
+              </div>
+            </div>
             <div>
               <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.85rem' }}>
                 Check-in

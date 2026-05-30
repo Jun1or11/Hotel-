@@ -2,6 +2,28 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuthContext } from '../context/AuthContext';
 
+const passwordPolicyPattern = /^[A-Za-z0-9]+$/;
+
+const validatePasswordPolicy = (value: string): string | null => {
+  if (value.length < 7 || value.length > 12) {
+    return 'La contraseña debe tener entre 7 y 12 caracteres';
+  }
+
+  if (!/[A-Z]/.test(value)) {
+    return 'La contraseña debe incluir al menos una mayúscula';
+  }
+
+  if (!/\d/.test(value)) {
+    return 'La contraseña debe incluir al menos un número';
+  }
+
+  if (!passwordPolicyPattern.test(value)) {
+    return 'No se permiten signos. Solo se permiten letras y números';
+  }
+
+  return null;
+};
+
 const Perfil: React.FC = () => {
   const { user, updateProfile } = useAuthContext();
   const [dni, setDni] = useState('');
@@ -36,6 +58,14 @@ const Perfil: React.FC = () => {
     if (newPassword && !currentPassword) {
       setError('Para cambiar contraseña debes ingresar la contraseña actual');
       return;
+    }
+
+    if (newPassword) {
+      const passwordError = validatePasswordPolicy(newPassword);
+      if (passwordError) {
+        setError(passwordError);
+        return;
+      }
     }
 
     setLoading(true);
@@ -153,6 +183,8 @@ const Perfil: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Nueva contraseña"
+                    pattern="[A-Za-z0-9!@._-]+"
+                    title="Usa 7 a 12 caracteres, letras, números y los símbolos ! @ . - _"
                   />
                 </div>
               </div>

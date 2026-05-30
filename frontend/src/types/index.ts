@@ -23,6 +23,7 @@ export interface Habitacion {
   precio_noche: number;
   estado: RoomStatus;
   descripcion?: string;
+  imagen?: string;
   amenidades?: string[];
 }
 

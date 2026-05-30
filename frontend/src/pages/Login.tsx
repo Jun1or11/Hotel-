@@ -6,6 +6,28 @@ import axiosInstance from '../api/axios';
 
 type AuthTab = 'login' | 'register';
 
+const passwordPolicyPattern = /^[A-Za-z0-9]+$/;
+
+const validatePasswordPolicy = (value: string): string | null => {
+  if (value.length < 7 || value.length > 12) {
+    return 'La contraseña debe tener entre 7 y 12 caracteres';
+  }
+
+  if (!/[A-Z]/.test(value)) {
+    return 'La contraseña debe incluir al menos una mayúscula';
+  }
+
+  if (!/\d/.test(value)) {
+    return 'La contraseña debe incluir al menos un número';
+  }
+
+  if (!passwordPolicyPattern.test(value)) {
+    return 'No se permiten signos. Solo se permiten letras y números';
+  }
+
+  return null;
+};
+
 const Auth: React.FC = () => {
   const location = useLocation();
   const [tab, setTab] = useState<AuthTab>(location.pathname === '/register' ? 'register' : 'login');
@@ -62,6 +84,12 @@ const Auth: React.FC = () => {
     const normalizedEmail = email.trim().toLowerCase();
     if (!isGmailEmail(normalizedEmail)) {
       setError('El correo debe ser una cuenta @gmail.com');
+      return;
+    }
+
+    const passwordError = validatePasswordPolicy(password);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 
@@ -239,10 +267,12 @@ const Auth: React.FC = () => {
                 Contraseña
               </label>
               <input
-                type="password"
+                type={tab === 'register' ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="form-control"
+                pattern={tab === 'register' ? '[A-Za-z0-9!@._-]+' : undefined}
+                title={tab === 'register' ? 'Usa 7 a 12 caracteres, letras, números y los símbolos ! @ . - _' : undefined}
                 required
               />
             </div>

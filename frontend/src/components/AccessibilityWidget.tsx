@@ -113,8 +113,19 @@ function AccessibilityWidget() {
         aria-controls="accessibility-panel"
         title="Accesibilidad"
       >
-        <span className="accessibility-fab-icon" aria-hidden="true">Aa</span>
-        <span className="accessibility-fab-text">Accesibilidad</span>
+        <span className="accessibility-fab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.8" />
+            <circle cx="12" cy="6.7" r="2" fill="currentColor" />
+            <path d="M5.6 8.7 12 12.3l6.4-3.6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M12 12.3 8 19.1" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M12 12.3 16 19.1" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="5" cy="9" r="1.2" fill="currentColor" />
+            <circle cx="19" cy="9" r="1.2" fill="currentColor" />
+            <circle cx="7" cy="19" r="1.2" fill="currentColor" />
+            <circle cx="17" cy="19" r="1.2" fill="currentColor" />
+          </svg>
+        </span>
       </button>
 
       {open && (

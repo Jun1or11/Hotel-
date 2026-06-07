@@ -7,6 +7,59 @@ const getStatusClass = (status: string) => `status-chip status-${status}`;
 const asNumber = (value: number | string) => Number(value ?? 0);
 const getHabitacionLabel = (reserva: Reserva) => reserva.habitacion?.numero ?? reserva.habitacion_id;
 
+const toLocalDateOnly = (value: string) => {
+  const date = new Date(value);
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+};
+
+const getDisplayStatus = (reserva: Reserva) => {
+  const checkoutDate = toLocalDateOnly(reserva.fecha_checkout);
+  const today = new Date();
+  const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  if (reserva.estado === 'activo' && checkoutDate < currentDate) {
+    return {
+      label: 'Finalizada',
+      className: 'status-chip',
+      style: {
+        background: 'rgba(59, 130, 246, 0.16)',
+        color: '#60a5fa',
+        borderColor: 'rgba(59, 130, 246, 0.4)',
+      } as React.CSSProperties,
+    };
+  }
+
+  if (reserva.estado === 'completado') {
+    return {
+      label: 'Finalizada',
+      className: getStatusClass('completado'),
+      style: {},
+    };
+  }
+
+  if (reserva.estado === 'cancelado') {
+    return {
+      label: 'Cancelada',
+      className: getStatusClass('cancelado'),
+      style: {},
+    };
+  }
+
+  if (reserva.estado === 'pendiente') {
+    return {
+      label: 'Pendiente',
+      className: getStatusClass('pendiente'),
+      style: {},
+    };
+  }
+
+  return {
+    label: 'Activa',
+    className: getStatusClass('activo'),
+    style: {},
+  };
+};
+
 const Historial: React.FC = () => {
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,6 +150,10 @@ const Historial: React.FC = () => {
               </thead>
               <tbody>
                 {reservas.map((reserva) => (
+                  (() => {
+                    const displayStatus = getDisplayStatus(reserva);
+
+                    return (
                   <tr key={reserva.id}>
                     <td style={{ color: 'var(--text)' }}>
                       Habitación #{getHabitacionLabel(reserva)}
@@ -108,14 +165,16 @@ const Historial: React.FC = () => {
                       {new Date(reserva.fecha_checkout).toLocaleDateString()}
                     </td>
                     <td>
-                      <span className={getStatusClass(reserva.estado)}>
-                        {reserva.estado}
+                      <span className={displayStatus.className} style={displayStatus.style}>
+                        {displayStatus.label}
                       </span>
                     </td>
                     <td style={{ color: 'var(--gold)' }}>
                       S/. {asNumber(reserva.total).toFixed(2)}
                     </td>
                   </tr>
+                    );
+                  })()
                 ))}
               </tbody>
             </table>

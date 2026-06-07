@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Navbar from '../components/Navbar';
 import axiosInstance from '../api/axios';
-import { Pago } from '../types';
+import { Pago, Reserva } from '../types';
 
 const asNumber = (value: number | string) => Number(value ?? 0);
 const getStatusClass = (status: string) => `status-chip status-${status}`;
@@ -10,16 +10,30 @@ const MisPagos: React.FC = () => {
   const [pagos, setPagos] = useState<Pago[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const resumenPagos = useMemo(() => {
+    const totalGastado = pagos
+      .filter((pago) => pago.estado === 'aprobado')
+      .reduce((suma, pago) => suma + asNumber(pago.monto), 0);
+
+    const pagosAprobados = pagos.filter((pago) => pago.estado === 'aprobado').length;
+
+    return {
+      totalGastado,
+      pagosAprobados,
+    };
+  }, [pagos]);
+
   useEffect(() => {
-    fetchPagos();
+    fetchData();
   }, []);
 
-  const fetchPagos = async () => {
+  const fetchData = async () => {
     try {
-      const response = await axiosInstance.get('/api/pagos/mis-pagos');
-      setPagos(response.data);
+      const pagosResponse = await axiosInstance.get('/api/pagos/mis-pagos');
+
+      setPagos(pagosResponse.data);
     } catch (error) {
-      console.error('Error fetching payments:', error);
+      console.error('Error fetching payments summary:', error);
     } finally {
       setLoading(false);
     }
@@ -65,6 +79,17 @@ const MisPagos: React.FC = () => {
       <Navbar />
       <div className="app-container">
         <h1 className="page-title">Mis Pagos</h1>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: '1rem' }}>
+          <div className="panel" style={{ padding: '0.95rem' }}>
+            <p style={{ color: 'var(--muted)', fontSize: '.84rem' }}>Total gastado</p>
+            <p style={{ color: 'var(--gold)', fontSize: '1.7rem', fontWeight: 700 }}>S/. {resumenPagos.totalGastado.toFixed(2)}</p>
+          </div>
+          <div className="panel" style={{ padding: '0.95rem' }}>
+            <p style={{ color: 'var(--muted)', fontSize: '.84rem' }}>Pagos aprobados</p>
+            <p style={{ color: 'var(--green)', fontSize: '1.7rem', fontWeight: 700 }}>{resumenPagos.pagosAprobados}</p>
+          </div>
+        </div>
 
         {pagos.length === 0 ? (
           <div className="panel" style={{ padding: '1.2rem', textAlign: 'center' }}>

@@ -15,42 +15,50 @@ def _build_reserva_confirmed_html(
         fecha_checkout: str,
         total: str,
 ) -> str:
-        return f"""
+                return f"""
 <!doctype html>
 <html lang=\"es\">
-    <body style=\"margin:0;padding:0;background:#f4f6f8;font-family:Segoe UI,Arial,sans-serif;color:#1f2937;\">
-        <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"background:#f4f6f8;padding:24px 12px;\">
+        <body style=\"margin:0;padding:0;background:#ffffff;font-family:Segoe UI,Arial,sans-serif;color:#f2eee8;\">
+            <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"background:#ffffff;padding:22px 10px;\">
             <tr>
                 <td align=\"center\">
-                    <table role=\"presentation\" width=\"620\" cellspacing=\"0\" cellpadding=\"0\" style=\"max-width:620px;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08);\">
+                    <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"max-width:560px;background:#141416;border:1px solid #2a2a2f;border-radius:18px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,0.42);\">
                         <tr>
-                            <td style=\"padding:26px 28px;background:linear-gradient(135deg,#0f766e,#115e59);color:#ffffff;\">
-                                <div style=\"font-size:12px;letter-spacing:1.2px;text-transform:uppercase;opacity:0.9;\">Hotel Nova</div>
-                                <h1 style=\"margin:10px 0 8px;font-size:26px;line-height:1.2;\">Reserva Confirmada</h1>
-                                <p style=\"margin:0;font-size:14px;opacity:0.95;\">Tu estadia esta lista. Te esperamos.</p>
+                            <td style=\"padding:18px 20px 14px;background:linear-gradient(135deg,#111111 0%,#1c1c1f 100%);border-bottom:1px solid #2a2a2f;\">
+                                <div style=\"display:inline-block;padding:6px 10px;border:1px solid rgba(200,169,110,0.55);border-radius:999px;color:#c8a96e;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;\">Hotel Nova</div>
+                                <h1 style=\"margin:10px 0 6px;font-size:22px;line-height:1.15;color:#f7f2ea;\">Reserva Confirmada</h1>
+                                <p style=\"margin:0;font-size:13px;line-height:1.4;color:#b8b1a8;\">Hola <strong style=\"color:#ffffff;\">{guest_name}</strong>, tu reserva fue confirmada. Aquí tienes el detalle.</p>
                             </td>
                         </tr>
                         <tr>
-                            <td style=\"padding:24px 28px 8px;\">
-                                <p style=\"margin:0 0 12px;font-size:15px;\">Hola <strong>{guest_name}</strong>,</p>
-                                <p style=\"margin:0 0 18px;font-size:15px;color:#4b5563;\">Tu reserva fue confirmada exitosamente. Aqui tienes el detalle:</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style=\"padding:0 28px 8px;\">
-                                <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;\">
-                                    <tr><td style=\"padding:12px 14px;background:#f9fafb;font-size:13px;color:#6b7280;width:40%;\">Numero de reserva</td><td style=\"padding:12px 14px;font-size:14px;font-weight:600;\">#{reserva_id}</td></tr>
-                                    <tr><td style=\"padding:12px 14px;background:#f9fafb;font-size:13px;color:#6b7280;\">Habitacion</td><td style=\"padding:12px 14px;font-size:14px;\">{room_label}</td></tr>
-                                    <tr><td style=\"padding:12px 14px;background:#f9fafb;font-size:13px;color:#6b7280;\">Check-in</td><td style=\"padding:12px 14px;font-size:14px;\">{fecha_checkin}</td></tr>
-                                    <tr><td style=\"padding:12px 14px;background:#f9fafb;font-size:13px;color:#6b7280;\">Check-out</td><td style=\"padding:12px 14px;font-size:14px;\">{fecha_checkout}</td></tr>
-                                    <tr><td style=\"padding:12px 14px;background:#f9fafb;font-size:13px;color:#6b7280;\">Total pagado</td><td style=\"padding:12px 14px;font-size:16px;font-weight:700;color:#0f766e;\">{total}</td></tr>
+                            <td style=\"padding:14px 20px 18px;\">
+                                <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"border:1px solid #2a2a2f;border-radius:14px;overflow:hidden;\">
+                                    <tr>
+                                        <td style=\"padding:11px 12px;background:#1c1c1f;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b8b1a8;width:40%;\">Reserva</td>
+                                        <td style=\"padding:11px 12px;background:#161618;font-size:14px;font-weight:700;color:#f7f2ea;\">#{reserva_id}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style=\"padding:11px 12px;background:#1c1c1f;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b8b1a8;\">Habitación</td>
+                                        <td style=\"padding:11px 12px;background:#161618;font-size:14px;color:#f7f2ea;\">{room_label}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style=\"padding:11px 12px;background:#1c1c1f;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b8b1a8;\">Fechas</td>
+                                        <td style=\"padding:11px 12px;background:#161618;font-size:14px;color:#f7f2ea;\">{fecha_checkin} - {fecha_checkout}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style=\"padding:11px 12px;background:#1c1c1f;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b8b1a8;\">Total pagado</td>
+                                        <td style=\"padding:11px 12px;background:#161618;font-size:15px;font-weight:800;color:#4fd1c5;\">{total}</td>
+                                    </tr>
                                 </table>
                             </td>
                         </tr>
                         <tr>
-                            <td style=\"padding:20px 28px 26px;\">
-                                <p style=\"margin:0 0 10px;font-size:14px;color:#4b5563;\">Gracias por elegir <strong>Hotel Nova</strong>.</p>
-                                <p style=\"margin:0;font-size:12px;color:#9ca3af;\">Este es un correo automatico de confirmacion.</p>
+                            <td style=\"padding:0 20px 18px;\">
+                                <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"border-top:1px solid #2a2a2f;padding-top:14px;\">
+                                    <tr>
+                                        <td style=\"font-size:12px;color:#8c857d;line-height:1.45;\">Gracias por elegir <strong style=\"color:#f7f2ea;\">Hotel Nova</strong>.</td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </table>

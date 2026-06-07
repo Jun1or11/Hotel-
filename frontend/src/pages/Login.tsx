@@ -257,7 +257,7 @@ const Auth: React.FC = () => {
                 className="form-control"
                 pattern={tab === 'register' ? '[a-zA-Z0-9._%+-]+@gmail\\.com' : undefined}
                 title={tab === 'register' ? 'Ingresa un correo @gmail.com' : undefined}
-                placeholder={tab === 'register' ? 'tuusuario@gmail.com' : 'tu correo'}
+                placeholder={tab === 'register' ? 'tuusuario@gmail.com' : 'correo'}
                 required
               />
             </div>

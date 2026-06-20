@@ -109,10 +109,21 @@ def register(usuario: UsuarioCreate, db: Session = Depends(get_db)):
             detail="El DNI ya está registrado en Hotel Nova"
         )
 
+    # Autocompletar nombre desde DNI si no se proporcionó
+    nombre = usuario.nombre
+    if not nombre:
+        try:
+            nombre = _fetch_dni_from_apiperu(normalized_dni)
+        except HTTPException:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se pudo autocompletar el nombre desde el DNI. Proporciona el campo 'nombre' manualmente."
+            )
+
     # Crear usuario
     usuario_data = UsuarioCreate(
         dni=normalized_dni,
-        nombre=usuario.nombre.strip(),
+        nombre=nombre,
         email=normalized_email,
         password=usuario.password,
     )

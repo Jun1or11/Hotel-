@@ -36,9 +36,21 @@ def _ensure_password_policy(password: str) -> str:
 class UsuarioCreate(BaseModel):
     """Schema para crear un usuario (registro)."""
     dni: str = Field(min_length=8, max_length=8)
-    nombre: str
+    nombre: str | None = None
     email: EmailStr
     password: str
+
+    @field_validator('dni')
+    @classmethod
+    def strip_dni(cls, value: str) -> str:
+        return value.strip()
+
+    @field_validator('nombre', mode='before')
+    @classmethod
+    def normalize_nombre(cls, value: str | None) -> str | None:
+        if value is None or value.strip() == '':
+            return None
+        return value.strip()
 
     @field_validator('email')
     @classmethod

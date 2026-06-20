@@ -38,6 +38,7 @@ const Auth: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingDni, setLoadingDni] = useState(false);
   const [lastDniLookup, setLastDniLookup] = useState('');
+  const [dniRegistrado, setDniRegistrado] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login, register, token, isAdmin, authLoading } = useAuthContext();
@@ -98,7 +99,10 @@ const Auth: React.FC = () => {
       const user = await register(dni.trim(), nombre.trim(), normalizedEmail, password);
       navigate(user.rol === 'admin' ? '/admin/dashboard' : '/', { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Error al registrarse');
+      const msg = err.response?.data?.detail || 'Error al registrarse';
+      if (!(dniRegistrado && msg.includes('DNI ya está registrado'))) {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -124,6 +128,7 @@ const Auth: React.FC = () => {
       if (data?.nombre) {
         setNombre(data.nombre);
         setLastDniLookup(cleanedDni);
+        setDniRegistrado(data.registradoEnHotelNova ?? false);
       }
     } catch (err: any) {
       setError(err.response?.data?.detail || 'No se pudo consultar el DNI');
@@ -166,10 +171,11 @@ const Auth: React.FC = () => {
               Iniciar sesión
             </button>
             <button
-              onClick={() => {
-                setTab('register');
-                setError('');
-              }}
+                  onClick={() => {
+                    setTab('register');
+                    setError('');
+                    setDniRegistrado(false);
+                  }}
               className={tab === 'register' ? 'btn-primary' : 'btn-ghost'}
               style={{
                 flex: 1,
@@ -209,7 +215,10 @@ const Auth: React.FC = () => {
                     <input
                       type="text"
                       value={dni}
-                      onChange={(e) => setDni(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                      onChange={(e) => {
+                        setDni(e.target.value.replace(/\D/g, '').slice(0, 8));
+                        setDniRegistrado(false);
+                      }}
                       onBlur={() => {
                         if (dni.length === 8 && dni !== lastDniLookup) {
                           handleBuscarDni();
@@ -229,6 +238,22 @@ const Auth: React.FC = () => {
                       {loadingDni ? 'Buscando...' : 'Buscar DNI'}
                     </button>
                   </div>
+                  {dniRegistrado && dni.length === 8 && lastDniLookup === dni && (
+                    <div
+                      style={{
+                        marginTop: 6,
+                        padding: '0.4rem 0.6rem',
+                        borderRadius: 8,
+                        border: '1px solid rgba(224, 82, 82, 0.3)',
+                        backgroundColor: 'rgba(224, 82, 82, 0.08)',
+                        color: 'var(--red)',
+                        fontSize: '.8rem',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Este DNI ya está registrado en Hotel Nova
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ marginBottom: 12 }}>

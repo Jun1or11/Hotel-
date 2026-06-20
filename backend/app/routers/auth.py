@@ -68,14 +68,17 @@ def _fetch_dni_from_apiperu(dni: str) -> str:
 
 
 @router.get("/dni/{dni}")
-def consultar_dni(dni: str):
-    """Consulta DNI en API Peru Dev y devuelve nombre completo normalizado."""
+def consultar_dni(dni: str, db: Session = Depends(get_db)):
+    """Consulta DNI en API Peru Dev y devuelve nombre completo normalizado + si ya está registrado en Hotel Nova."""
     dni = dni.strip()
     if not dni.isdigit() or len(dni) != 8:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="DNI inválido")
 
     nombre = _fetch_dni_from_apiperu(dni)
-    return {"dni": dni, "nombre": nombre}
+
+    ya_registrado = get_user_by_dni(db, dni) is not None
+
+    return {"dni": dni, "nombre": nombre, "registradoEnHotelNova": ya_registrado}
 
 
 @router.post("/register", response_model=UsuarioResponse)
@@ -103,7 +106,7 @@ def register(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     if existing_user_by_dni:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="El DNI ya está registrado"
+            detail="El DNI ya está registrado en Hotel Nova"
         )
 
     # Crear usuario

@@ -204,11 +204,24 @@ select:focus {
 }
 
 .admin-shell.is-collapsed {
-  --admin-sidebar-width: 88px;
+  --admin-sidebar-width: 0px;
+}
+
+.admin-shell.is-collapsed .admin-sidebar {
+  width: 88px;
 }
 
 .admin-shell.is-collapsed .admin-sidebar:hover {
   width: 284px;
+}
+
+.admin-shell.is-collapsed .admin-main {
+  margin-left: 0;
+}
+
+.admin-shell.is-collapsed .admin-main-inner {
+  width: min(1320px, calc(100vw - 2rem));
+  margin: 0 auto;
 }
 
 .admin-shell.is-collapsed .admin-sidebar:hover + .admin-main {
@@ -233,10 +246,6 @@ select:focus {
   box-shadow: 18px 0 40px rgba(0, 0, 0, 0.22);
   overflow: hidden;
   transition: width 0.32s ease, transform 0.32s ease, box-shadow 0.32s ease, padding 0.32s ease;
-}
-
-.admin-shell.is-collapsed .admin-sidebar:hover {
-  box-shadow: 18px 0 44px rgba(0, 0, 0, 0.26);
 }
 
 .admin-sidebar-brand p,
@@ -805,6 +814,7 @@ html[data-theme='light'] .payment-modal-overlay {
 .payment-modal {
   padding: 1.35rem;
   box-shadow: 0 26px 60px rgba(0, 0, 0, 0.28);
+  border-radius: 0;
 }
 
 .payment-modal-hero {
@@ -828,7 +838,7 @@ html[data-theme='light'] .payment-modal-overlay {
   border: 1px solid rgba(200, 169, 110, 0.35);
   color: var(--gold);
   background: rgba(200, 169, 110, 0.08);
-  border-radius: 999px;
+  border-radius: 6px;
   padding: 0.42rem 0.75rem;
   font-size: 0.78rem;
   font-weight: 600;
@@ -843,7 +853,7 @@ html[data-theme='light'] .payment-modal-overlay {
 
 .payment-method-card {
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   padding: 0.95rem;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
   display: grid;
@@ -877,7 +887,7 @@ html[data-theme='light'] .payment-modal-overlay {
 .payment-method-icon {
   width: 2.7rem;
   height: 2.7rem;
-  border-radius: 14px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
   font-weight: 700;
@@ -896,7 +906,7 @@ html[data-theme='light'] .payment-modal-overlay {
 }
 
 .payment-method-badge {
-  border-radius: 999px;
+  border-radius: 4px;
   padding: 0.3rem 0.62rem;
   font-size: 0.72rem;
   font-weight: 700;
@@ -1371,4 +1381,58 @@ html[data-theme='light'] .accessibility-fab {
   .accessibility-panel {
     width: min(100vw - 1.5rem, 360px);
   }
+}
+
+/* Alto contraste */
+html[data-contrast='high'] {
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --surface2: #1a1a1a;
+  --border: #ffffff;
+  --gold: #ffd700;
+  --text: #ffffff;
+  --muted: #cccccc;
+  --green: #00cc00;
+  --red: #ff3333;
+  --amber: #ffaa00;
+  --navbar-background: rgba(0, 0, 0, 0.95);
+  --modal-overlay: rgba(0, 0, 0, 0.8);
+}
+
+html[data-theme='light'][data-contrast='high'] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f0f0f0;
+  --border: #000000;
+  --gold: #8a5a00;
+  --text: #000000;
+  --muted: #333333;
+  --green: #006600;
+  --red: #cc0000;
+  --amber: #995500;
+  --navbar-background: rgba(255, 255, 255, 0.95);
+  --modal-overlay: rgba(255, 255, 255, 0.5);
+}
+
+html[data-contrast='high'] body {
+  background-image: none !important;
+}
+
+html[data-contrast='high'] .accessibility-fab {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+/* Reducir animaciones */
+html[data-motion='reduced'] *,
+html[data-motion='reduced'] *::before,
+html[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Cursor grande */
+html[data-cursor='large'] * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='white' stroke-width='3.5'/%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='%23222' stroke-width='1.2'/%3E%3Ccircle cx='20' cy='20' r='3' fill='white'/%3E%3Ccircle cx='20' cy='20' r='3' fill='none' stroke='%23222' stroke-width='1'/%3E%3C/svg%3E") 20 20, auto !important;
 }

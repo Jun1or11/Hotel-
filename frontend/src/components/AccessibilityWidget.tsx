@@ -2,11 +2,17 @@ import React from 'react';
 
 type ThemeMode = 'dark' | 'light';
 type VisionMode = 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia';
+type ContrastMode = 'normal' | 'high';
+type MotionMode = 'normal' | 'reduced';
+type CursorMode = 'normal' | 'large';
 
 type AccessibilityPreferences = {
   theme: ThemeMode;
   fontScale: number;
   visionMode: VisionMode;
+  contrast: ContrastMode;
+  motion: MotionMode;
+  cursor: CursorMode;
 };
 
 const STORAGE_KEY = 'hotel-nova-accessibility-v1';
@@ -23,6 +29,9 @@ const DEFAULT_PREFERENCES: AccessibilityPreferences = {
   theme: 'dark',
   fontScale: 1,
   visionMode: 'normal',
+  contrast: 'normal',
+  motion: 'normal',
+  cursor: 'normal',
 };
 
 function clampFontScale(value: number) {
@@ -52,6 +61,9 @@ function readPreferences(): AccessibilityPreferences {
       theme,
       fontScale,
       visionMode,
+      contrast: parsed.contrast === 'high' ? 'high' : 'normal',
+      motion: parsed.motion === 'reduced' ? 'reduced' : 'normal',
+      cursor: parsed.cursor === 'large' ? 'large' : 'normal',
     };
   } catch {
     return DEFAULT_PREFERENCES;
@@ -67,6 +79,9 @@ function AccessibilityWidget() {
 
     root.dataset.theme = preferences.theme;
     root.dataset.vision = preferences.visionMode;
+    root.dataset.contrast = preferences.contrast;
+    root.dataset.motion = preferences.motion;
+    root.dataset.cursor = preferences.cursor;
     root.style.setProperty('--app-font-size', `${Math.round(16 * preferences.fontScale)}px`);
 
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
@@ -98,6 +113,18 @@ function AccessibilityWidget() {
       ...current,
       visionMode: VISION_MODES[boundedIndex].value,
     }));
+  };
+
+  const setContrast = (contrast: ContrastMode) => {
+    setPreferences((current) => ({ ...current, contrast }));
+  };
+
+  const setMotion = (motion: MotionMode) => {
+    setPreferences((current) => ({ ...current, motion }));
+  };
+
+  const setCursor = (cursor: CursorMode) => {
+    setPreferences((current) => ({ ...current, cursor }));
   };
 
   const currentVisionIndex = VISION_MODES.findIndex((option) => option.value === preferences.visionMode);
@@ -222,6 +249,78 @@ function AccessibilityWidget() {
                     </span>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            <div className="accessibility-section">
+              <div className="accessibility-section__title">
+                <span>Alto contraste</span>
+                <strong>{preferences.contrast === 'high' ? 'Activado' : 'Desactivado'}</strong>
+              </div>
+
+              <div className="accessibility-toggle-group" role="group" aria-label="Alto contraste">
+                <button
+                  type="button"
+                  className={preferences.contrast === 'normal' ? 'is-active' : ''}
+                  onClick={() => setContrast('normal')}
+                >
+                  Normal
+                </button>
+                <button
+                  type="button"
+                  className={preferences.contrast === 'high' ? 'is-active' : ''}
+                  onClick={() => setContrast('high')}
+                >
+                  Alto
+                </button>
+              </div>
+            </div>
+
+            <div className="accessibility-section">
+              <div className="accessibility-section__title">
+                <span>Reducir animaciones</span>
+                <strong>{preferences.motion === 'reduced' ? 'Activado' : 'Desactivado'}</strong>
+              </div>
+
+              <div className="accessibility-toggle-group" role="group" aria-label="Reducir animaciones">
+                <button
+                  type="button"
+                  className={preferences.motion === 'normal' ? 'is-active' : ''}
+                  onClick={() => setMotion('normal')}
+                >
+                  Normal
+                </button>
+                <button
+                  type="button"
+                  className={preferences.motion === 'reduced' ? 'is-active' : ''}
+                  onClick={() => setMotion('reduced')}
+                >
+                  Reducido
+                </button>
+              </div>
+            </div>
+
+            <div className="accessibility-section">
+              <div className="accessibility-section__title">
+                <span>Cursor grande</span>
+                <strong>{preferences.cursor === 'large' ? 'Activado' : 'Desactivado'}</strong>
+              </div>
+
+              <div className="accessibility-toggle-group" role="group" aria-label="Cursor grande">
+                <button
+                  type="button"
+                  className={preferences.cursor === 'normal' ? 'is-active' : ''}
+                  onClick={() => setCursor('normal')}
+                >
+                  Normal
+                </button>
+                <button
+                  type="button"
+                  className={preferences.cursor === 'large' ? 'is-active' : ''}
+                  onClick={() => setCursor('large')}
+                >
+                  Grande
+                </button>
               </div>
             </div>
           </section>

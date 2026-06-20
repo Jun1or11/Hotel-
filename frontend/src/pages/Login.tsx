@@ -40,6 +40,7 @@ const Auth: React.FC = () => {
   const [lastDniLookup, setLastDniLookup] = useState('');
   const [dniRegistrado, setDniRegistrado] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login, register, token, isAdmin, authLoading } = useAuthContext();
   const backgroundImageStyle = {
@@ -291,15 +292,38 @@ const Auth: React.FC = () => {
               <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.85rem' }}>
                 Contraseña
               </label>
-              <input
-                type={tab === 'register' ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="form-control"
-                pattern={tab === 'register' ? '[A-Za-z0-9!@._-]+' : undefined}
-                title={tab === 'register' ? 'Usa 7 a 12 caracteres, letras, números y los símbolos ! @ . - _' : undefined}
-                required
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="form-control"
+                  pattern={tab === 'register' ? '[A-Za-z0-9!@._-]+' : undefined}
+                  title={tab === 'register' ? 'Usa 7 a 12 caracteres, letras, números y los símbolos ! @ . - _' : undefined}
+                  required
+                  style={{ paddingRight: 40 }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 4,
+                    color: 'var(--text)',
+                    fontSize: '1.1rem',
+                    lineHeight: 1,
+                  }}
+                  tabIndex={-1}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             <button

@@ -316,7 +316,7 @@ const MisReservas: React.FC = () => {
             zIndex: 1100,
           }}
         >
-          <div className="panel payment-modal" style={{ width: '100%', maxWidth: 640 }}>
+          <div className="panel payment-modal" style={{ width: '100%', maxWidth: 780 }}>
             <div className="payment-modal-hero">
               <div>
                 <p className="payment-modal-kicker">Confirmación de reserva</p>

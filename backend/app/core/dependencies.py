@@ -62,3 +62,31 @@ def require_admin(user: Usuario = Depends(get_current_user)) -> Usuario:
             detail="Permisos insuficientes"
         )
     return user
+
+
+def verify_resource_access(
+    resource_owner_id: int,
+    current_user: Usuario,
+    resource_name: str = "recurso"
+) -> None:
+    """
+    ✅ A01 - Broken Access Control Mitigation
+    Verifica que el usuario tenga acceso al recurso.
+    Solo permite si es propietario o es admin.
+    
+    Args:
+        resource_owner_id: ID del usuario propietario del recurso
+        current_user: Usuario autenticado actual
+        resource_name: Nombre del recurso (para mensaje de error)
+    
+    Raises:
+        HTTPException(403) si no tiene permiso
+    """
+    is_owner = resource_owner_id == current_user.id
+    is_admin = current_user.rol.value == "admin"
+    
+    if not (is_owner or is_admin):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"No tienes permiso para acceder a este {resource_name}"
+        )

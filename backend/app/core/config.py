@@ -15,9 +15,12 @@ class Settings(BaseSettings):
     db_password: str = ""
 
     # Seguridad
-    secret_key: str = "dev-secret-key-change-me"
+    secret_key: str = Field(
+        default=...,
+        validation_alias=AliasChoices("SECRET_KEY", "secret_key"),
+    )
     algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60
+    access_token_expire_minutes: int = 30
 
     # Integraciones
     mercadopago_access_token: str = ""
@@ -35,8 +38,8 @@ class Settings(BaseSettings):
     smtp_from_name: str = "Hotel Nova"
     smtp_from_email: str = ""
     apiperu_token: str = Field(
-        default="c39c586288dea5a5f6866f0366cae660130c696fd413f63f5527176b62a94733",
-        validation_alias=AliasChoices("apiperu.token", "APIPERU_TOKEN"),
+        default=...,
+        validation_alias=AliasChoices("APIPERU_TOKEN"),
     )
     apiperu_url_dni: str = Field(
         default="https://apiperu.dev/api/dni",

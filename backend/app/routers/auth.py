@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import timedelta
 import json
+import logging
 from urllib import request as urlrequest
 from urllib.error import HTTPError, URLError
 
@@ -12,8 +13,10 @@ from app.crud.usuario import create_user, get_user_by_dni, get_user_by_email
 from app.core.security import verify_password, create_access_token, hash_password
 from app.core.dependencies import get_current_user
 from app.models import Usuario
+from app.services.auth_service import login_tracker  # ✅ A07 - Rate limiting
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+logger = logging.getLogger(__name__)  # ✅ A07 - Logging
 
 
 def _build_full_name(payload: dict) -> str:
@@ -68,7 +71,11 @@ def _fetch_dni_from_apiperu(dni: str) -> str:
 
 
 @router.get("/dni/{dni}")
-def consultar_dni(dni: str, db: Session = Depends(get_db)):
+def consultar_dni(
+    dni: str, 
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)  # ✅ A01 - Requiere autenticación
+):
     """Consulta DNI en API Peru Dev y devuelve nombre completo normalizado + si ya está registrado en Hotel Nova."""
     dni = dni.strip()
     if not dni.isdigit() or len(dni) != 8:
@@ -135,11 +142,23 @@ def register(usuario: UsuarioCreate, db: Session = Depends(get_db)):
 def login(credentials: UsuarioLogin, db: Session = Depends(get_db)):
     """
     Autentica un usuario y retorna un JWT token.
+    ✅ A07 - Con rate limiting y logging de intentos fallidos.
     """
-    # Buscar usuario por email
+    # Normalizar email
     normalized_email = credentials.email.strip().lower()
+    
+    # ✅ A07 - Verificar si está bloqueado por demasiados intentos
+    if login_tracker.is_blocked(normalized_email):
+        logger.warning(f"Blocked login attempt for {normalized_email}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Demasiados intentos de login. Intenta en 15 minutos"
+        )
+    
+    # Buscar usuario por email
     user = get_user_by_email(db, normalized_email)
     if not user:
+        login_tracker.record_attempt(normalized_email)  # ✅ A07 - Registrar intento fallido
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credenciales inválidas"
@@ -147,6 +166,8 @@ def login(credentials: UsuarioLogin, db: Session = Depends(get_db)):
     
     # Verificar contraseña
     if not verify_password(credentials.password, user.password_hash):
+        login_tracker.record_attempt(normalized_email)  # ✅ A07 - Registrar intento fallido
+        logger.warning(f"Failed login attempt for {normalized_email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credenciales inválidas"
@@ -157,6 +178,10 @@ def login(credentials: UsuarioLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Usuario inactivo"
         )
+    
+    # ✅ A07 - Limpiar intentos al login exitoso
+    login_tracker.reset(normalized_email)
+    logger.info(f"Successful login for user {user.id} ({normalized_email})")
     
     # Crear token
     access_token = create_access_token(

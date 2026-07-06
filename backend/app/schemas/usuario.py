@@ -16,24 +16,21 @@ def _ensure_gmail_domain(email: str) -> str:
 
 def _ensure_password_policy(password: str) -> str:
     """
-    ✅ A07 - Validación de contraseña fuerte según OWASP.
+    Validación de contraseña.
     Requisitos:
-    - Mínimo 8 caracteres
+    - Entre 7 y 12 caracteres
     - Al menos 1 mayúscula
     - Al menos 1 número
-    - Al menos 1 símbolo especial (!@#$%^&*)
+    - Solo letras y números (sin símbolos especiales)
     """
-    if len(password) < 8:
-        raise ValueError('La contraseña debe tener mínimo 8 caracteres')
+    if len(password) < 7 or len(password) > 12:
+        raise ValueError('La contraseña debe tener entre 7 y 12 caracteres')
 
     if not any(char.isupper() for char in password):
         raise ValueError('Debe contener al menos una mayúscula (A-Z)')
 
     if not any(char.isdigit() for char in password):
         raise ValueError('Debe contener al menos un número (0-9)')
-
-    if not any(char in '!@#$%^&*' for char in password):
-        raise ValueError('Debe contener al menos un símbolo (!@#$%^&*)')
 
     return password
 

@@ -17,7 +17,7 @@ export interface Usuario {
 
 export interface Habitacion {
   id: string;
-  numero: number;
+  numero: string;
   tipo: RoomType;
   capacidad: number;
   precio_noche: number;

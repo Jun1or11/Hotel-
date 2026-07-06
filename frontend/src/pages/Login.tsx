@@ -100,10 +100,15 @@ const Auth: React.FC = () => {
       const user = await register(dni.trim(), nombre.trim(), normalizedEmail, password);
       navigate(user.rol === 'admin' ? '/admin/dashboard' : '/', { replace: true });
     } catch (err: any) {
-      const msg = err.response?.data?.detail || 'Error al registrarse';
-      if (!(dniRegistrado && msg.includes('DNI ya está registrado'))) {
-        setError(msg);
+      const detail = err.response?.data?.detail;
+      let msg = 'Error al registrarse';
+      if (typeof detail === 'string') {
+        msg = detail;
+      } else if (Array.isArray(detail) && detail.length > 0) {
+        // Errores de validación Pydantic 422: [{msg: '...', loc: [...]}]
+        msg = detail.map((d: any) => d.msg || d.message || 'Error de validación').join('. ');
       }
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -172,11 +177,11 @@ const Auth: React.FC = () => {
               Iniciar sesión
             </button>
             <button
-                  onClick={() => {
-                    setTab('register');
-                    setError('');
-                    setDniRegistrado(false);
-                  }}
+              onClick={() => {
+                setTab('register');
+                setError('');
+                setDniRegistrado(false);
+              }}
               className={tab === 'register' ? 'btn-primary' : 'btn-ghost'}
               style={{
                 flex: 1,
@@ -214,6 +219,7 @@ const Auth: React.FC = () => {
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8 }}>
                     <input
+                      name="dni"
                       type="text"
                       value={dni}
                       onChange={(e) => {
@@ -262,6 +268,7 @@ const Auth: React.FC = () => {
                     Nombre completo
                   </label>
                   <input
+                    name="nombre"
                     type="text"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
@@ -277,6 +284,7 @@ const Auth: React.FC = () => {
                 Email
               </label>
               <input
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -294,6 +302,7 @@ const Auth: React.FC = () => {
               </label>
               <div style={{ position: 'relative' }}>
                 <input
+                  name="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

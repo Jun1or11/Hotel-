@@ -74,7 +74,6 @@ def _fetch_dni_from_apiperu(dni: str) -> str:
 def consultar_dni(
     dni: str, 
     db: Session = Depends(get_db),
-    current_user: Usuario = Depends(get_current_user)  # ✅ A01 - Requiere autenticación
 ):
     """Consulta DNI en API Peru Dev y devuelve nombre completo normalizado + si ya está registrado en Hotel Nova."""
     dni = dni.strip()

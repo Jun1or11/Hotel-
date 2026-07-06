@@ -113,6 +113,7 @@ const Perfil: React.FC = () => {
 
           {message && (
             <div
+              data-testid="profile-message"
               style={{
                 marginBottom: 12,
                 padding: '0.6rem 0.7rem',
@@ -134,6 +135,7 @@ const Perfil: React.FC = () => {
                   DNI
                 </label>
                 <input
+                  name="dni"
                   type="text"
                   className="form-control"
                   value={dni}
@@ -146,6 +148,7 @@ const Perfil: React.FC = () => {
                   Nombre completo
                 </label>
                 <input
+                  name="nombre"
                   type="text"
                   className="form-control"
                   value={nombre}
@@ -158,6 +161,7 @@ const Perfil: React.FC = () => {
                   Email
                 </label>
                 <input
+                  name="email"
                   type="email"
                   className="form-control"
                   value={email}

@@ -31,8 +31,9 @@ const GestionHabitaciones: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState('');
   const [formData, setFormData] = useState({
-    numero: 0,
+    numero: '',
     tipo: 'estandar',
     capacidad: 2,
     precio_noche: 0,
@@ -68,13 +69,14 @@ const GestionHabitaciones: React.FC = () => {
   };
 
   const handleOpenModal = (habitacion?: Habitacion) => {
+    setErrorMsg('');
     if (habitacion) {
       setEditingId(habitacion.id);
       setFormData({
         numero: habitacion.numero,
         tipo: habitacion.tipo,
         capacidad: habitacion.capacidad,
-        precio_noche: habitacion.precio_noche,
+        precio_noche: Number(habitacion.precio_noche) || 0,
         estado: habitacion.estado,
         descripcion: habitacion.descripcion || '',
         amenidades: getAmenidadesText(habitacion.amenidades),
@@ -82,7 +84,7 @@ const GestionHabitaciones: React.FC = () => {
     } else {
       setEditingId(null);
       setFormData({
-        numero: 0,
+        numero: '',
         tipo: 'estandar',
         capacidad: 2,
         precio_noche: 0,
@@ -97,10 +99,18 @@ const GestionHabitaciones: React.FC = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingId(null);
+    setErrorMsg('');
   };
 
   const handleSave = async () => {
     try {
+      setErrorMsg('');
+
+      if (!formData.numero.trim()) {
+        setErrorMsg('El número de habitación es obligatorio');
+        return;
+      }
+
       const amenitiesArray = formData.amenidades
         .split(',')
         .map((a) => a.trim())
@@ -113,6 +123,9 @@ const GestionHabitaciones: React.FC = () => {
 
       const data = {
         ...formData,
+        numero: formData.numero.trim(),
+        precio_noche: Number(formData.precio_noche) || 0,
+        capacidad: Number(formData.capacidad) || 1,
         amenidades,
       };
 
@@ -124,19 +137,31 @@ const GestionHabitaciones: React.FC = () => {
 
       fetchHabitaciones();
       handleCloseModal();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving room:', error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const err = error as { response: { data?: { detail?: string } } };
+        setErrorMsg(err.response?.data?.detail || 'Error al guardar la habitación');
+      } else {
+        setErrorMsg('Error de conexión al guardar la habitación');
+      }
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('¿Estás seguro de que deseas eliminar esta habitación?')) {
-      try {
-        await axiosInstance.delete(`/api/habitaciones/${id}`);
-        fetchHabitaciones();
-      } catch (error) {
-        console.error('Error deleting room:', error);
+    if (!confirm('¿Estás seguro de que deseas eliminar esta habitación?')) return;
+
+    try {
+      await axiosInstance.delete(`/api/habitaciones/${id}`);
+      fetchHabitaciones();
+    } catch (error: unknown) {
+      console.error('Error deleting room:', error);
+      let msg = 'Error al eliminar la habitación';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const err = error as { response: { data?: { detail?: string } } };
+        msg = err.response?.data?.detail || msg;
       }
+      alert(msg);
     }
   };
 
@@ -227,13 +252,20 @@ const GestionHabitaciones: React.FC = () => {
                 {editingId ? 'Editar Habitación' : 'Nueva Habitación'}
               </h2>
 
+              {errorMsg && (
+                <div style={{ color: 'var(--red)', background: 'rgba(255,0,0,0.1)', padding: '8px 12px', borderRadius: 6, fontSize: '.85rem', marginBottom: 8 }}>
+                  {errorMsg}
+                </div>
+              )}
+
               <div style={{ display: 'grid', gap: 10 }}>
                 <div>
                   <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.84rem' }}>Número</label>
                   <input
-                    type="number"
+                    name="numero"
+                    type="text"
                     value={formData.numero}
-                    onChange={(e) => setFormData({ ...formData, numero: parseInt(e.target.value) || 0 })}
+                    onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
                     className="form-control"
                   />
                 </div>
@@ -241,6 +273,7 @@ const GestionHabitaciones: React.FC = () => {
                 <div>
                   <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.84rem' }}>Tipo</label>
                   <select
+                    name="tipo"
                     value={formData.tipo}
                     onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
                     className="form-control"
@@ -255,6 +288,7 @@ const GestionHabitaciones: React.FC = () => {
                 <div>
                   <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.84rem' }}>Capacidad</label>
                   <input
+                    name="capacidad"
                     type="number"
                     value={formData.capacidad}
                     onChange={(e) => setFormData({ ...formData, capacidad: parseInt(e.target.value) || 1 })}
@@ -265,6 +299,7 @@ const GestionHabitaciones: React.FC = () => {
                 <div>
                   <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.84rem' }}>Precio/Noche</label>
                   <input
+                    name="precio_noche"
                     type="number"
                     value={formData.precio_noche}
                     onChange={(e) => setFormData({ ...formData, precio_noche: parseFloat(e.target.value) || 0 })}
@@ -275,6 +310,7 @@ const GestionHabitaciones: React.FC = () => {
                 <div>
                   <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.84rem' }}>Estado</label>
                   <select
+                    name="estado"
                     value={formData.estado}
                     onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
                     className="form-control"
@@ -288,6 +324,7 @@ const GestionHabitaciones: React.FC = () => {
                 <div>
                   <label style={{ color: 'var(--text)', display: 'block', marginBottom: 6, fontSize: '.84rem' }}>Descripción</label>
                   <textarea
+                    name="descripcion"
                     value={formData.descripcion}
                     onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                     rows={2}
@@ -300,6 +337,7 @@ const GestionHabitaciones: React.FC = () => {
                     Amenidades (separadas por coma)
                   </label>
                   <input
+                    name="amenidades"
                     type="text"
                     value={formData.amenidades}
                     onChange={(e) => setFormData({ ...formData, amenidades: e.target.value })}

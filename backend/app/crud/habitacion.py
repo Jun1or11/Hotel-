@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional, List
 
-from app.models import Habitacion
+from app.models import Habitacion, HabitacionPopular, Reserva
 from app.schemas.habitacion import HabitacionCreate, HabitacionUpdate
 
 
@@ -65,11 +65,18 @@ def update_habitacion(
 
 
 def delete_habitacion(db: Session, hab_id: int) -> bool:
-    """Elimina una habitación."""
+    """Elimina una habitación y todos sus datos relacionados."""
     db_habitacion = get_habitacion_by_id(db, hab_id)
     if not db_habitacion:
         return False
-    
+
+    # Eliminar registros de popularidad asociados
+    db.query(HabitacionPopular).filter(HabitacionPopular.habitacion_id == hab_id).delete()
+
+    # Eliminar reservas asociadas (y sus pagos en cascada)
+    db.query(Reserva).filter(Reserva.habitacion_id == hab_id).delete()
+
+    # Eliminar la habitación
     db.delete(db_habitacion)
     db.commit()
     return True

@@ -158,6 +158,7 @@ const Navbar: React.FC = () => {
 
                 <div style={{ position: 'relative' }}>
                   <button
+                    name="user-menu"
                     onClick={() => setShowMenu(!showMenu)}
                     style={{
                       display: 'flex',

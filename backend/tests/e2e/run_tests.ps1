@@ -30,8 +30,8 @@ if ($Headless) {
     $Env:HEADLESS = "1"
 }
 
-Write-Host "Executing: python -m pytest $($pytestArgs -join ' ')" -ForegroundColor Cyan
-python -m pytest @pytestArgs
+Write-Host "Executing: python tests/e2e/run_e2e_live.py $($pytestArgs -join ' ')" -ForegroundColor Cyan
+python tests/e2e/run_e2e_live.py @pytestArgs
 
 $exitCode = $LASTEXITCODE
 Write-Host ""

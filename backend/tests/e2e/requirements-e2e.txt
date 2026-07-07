@@ -2,3 +2,4 @@ selenium>=4.15
 pytest>=8
 webdriver-manager>=4
 pytest-html>=4
+rich>=15

@@ -38,9 +38,9 @@ def get_user_by_email(db: Session, email: str):
 | Campo | Detalle |
 |---|---|
 | **Objetivo** | Verificar que SQL injection no funciona |
-| **Procedimiento** | 1. Intentar login con email: `test@test.com' OR '1'='1`<br>2. Pydantic rechaza (no es email válido)<br>3. BD no se ve comprometida |
-| **Resultado esperado** | Pydantic rechaza email malformado antes de tocar BD |
-| **Evidencia esperada** | Error 422: `"Invalid email format"` |
+| **Procedimiento** | 1. Intentar login con email: `test@test.com' OR '1'='1`<br>2. SQLAlchemy ORM parametriza la consulta, trata el input como string literal<br>3. BD no se ve comprometida |
+| **Resultado esperado** | El ORM evita la inyección, la query busca el email literal y no encuentra resultados |
+| **Evidencia esperada** | `401 Unauthorized` — `{"detail": "Credenciales inválidas"}` |
 
 ---
 

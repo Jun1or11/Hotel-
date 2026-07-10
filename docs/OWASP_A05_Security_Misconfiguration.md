@@ -58,7 +58,7 @@ APIPERU_TOKEN=tu-token-aqui
 | **Objetivo** | Verificar que secret_key no está en el código |
 | **Procedimiento** | 1. Abrir `config.py` línea 14<br>2. Verificar que `secret_key = Field(default=...)`<br>3. Grep: `grep -r "dev-secret-key" backend/` → vacío |
 | **Resultado esperado** | Secret key requiere variable `SECRET_KEY` de `.env` |
-| **Evidencia esperada** | Error sin `.env`: `ValidationError: SECRET_KEY is required` |
+| **Evidencia esperada** | **1.** `config.py` línea 14: `secret_key = Field(default=..., validation_alias=AliasChoices("SECRET_KEY"))`<br>**2.** Error sin `.env`: `ValidationError: SECRET_KEY is required` |
 
 ---
 

@@ -175,6 +175,34 @@ def create_new_reserva(
     return db_reserva
 
 
+@router.get("/{reserva_id}", response_model=ReservaDetailResponse)
+def get_reserva(
+    reserva_id: int,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    """
+    Obtiene una reserva por ID.
+    Solo el propietario o un admin pueden verla.
+    """
+    reserva = get_reserva_by_id(db, reserva_id)
+    if not reserva:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reserva no encontrada"
+        )
+
+    is_owner = reserva.usuario_id == current_user.id
+    is_admin = current_user.rol.value == "admin"
+    if not (is_owner or is_admin):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para ver esta reserva"
+        )
+
+    return reserva
+
+
 @router.post("/{reserva_id}/pagar")
 def pagar_reserva(
     reserva_id: int,

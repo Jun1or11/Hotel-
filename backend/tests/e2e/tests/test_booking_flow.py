@@ -41,6 +41,8 @@ class TestBookingFlow:
         reservas_page.open_mis_reservas()
         count = reservas_page.get_reservation_count()
         assert count > 0
+        import time
+        time.sleep(3)
 
     def test_cancel_pending_reservation(self, browser, frontend_url):
         reservas_page = MyReservationsPage(browser, frontend_url)

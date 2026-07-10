@@ -1,4 +1,7 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from .base_page import BasePage
 
 
@@ -17,14 +20,16 @@ class MyReservationsPage(BasePage):
     def cancel_first_reservation(self):
         btns = self.finds(*self.CANCEL_BUTTON)
         if btns:
-            btns[0].click()
             import time
-            time.sleep(1)
+            time.sleep(2)
+            btns[0].click()
             try:
+                time.sleep(1.5)
+                WebDriverWait(self.driver, 5).until(EC.alert_is_present())
                 alert = self.driver.switch_to.alert
                 alert.accept()
-                time.sleep(1)
-            except Exception:
+                time.sleep(2)
+            except TimeoutException:
                 pass
         return self
 

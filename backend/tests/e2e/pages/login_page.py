@@ -27,20 +27,24 @@ class LoginPage(BasePage):
 
     def register_with_lookup(self, dni, email, password):
         self.open("/login")
+        time.sleep(1)
         self.click(*self.REGISTER_TAB)
-        time.sleep(0.5)
+        time.sleep(1)
         self.type(*self.REGISTER_DNI, dni)
-        time.sleep(0.5)
+        time.sleep(1)
         self.click(*self.BUSCAR_DNI_BTN)
         time.sleep(3)
         try:
-            WebDriverWait(self.driver, 5).until(
-                EC.text_to_be_present_in_element_value((By.CSS_SELECTOR, "input[name='nombre']"), "")
+            WebDriverWait(self.driver, 10).until(
+                lambda d: d.find_element(By.CSS_SELECTOR, "input[name='nombre']").get_attribute("value") != ""
             )
         except TimeoutException:
             pass
-        time.sleep(0.5)
+        time.sleep(1)
         self.type(*self.EMAIL_INPUT, email)
+        time.sleep(1)
         self.type(*self.PASSWORD_INPUT, password)
+        time.sleep(1)
         self.click(*self.SUBMIT_BUTTON)
+        time.sleep(2)
         return self

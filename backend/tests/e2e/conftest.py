@@ -14,6 +14,8 @@ ADMIN_PASSWORD = "Promocion135"
 GUEST_EMAIL = "ana.torres@gmail.com"
 GUEST_PASSWORD = "Ana12345"
 
+CHROME_SERVICE = Service(ChromeDriverManager().install())
+
 
 @pytest.fixture(scope="function")
 def browser():
@@ -24,9 +26,8 @@ def browser():
     options.add_argument("--disable-gpu")
     if os.getenv("HEADLESS"):
         options.add_argument("--headless=new")
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
-    driver.implicitly_wait(5)
+    driver = webdriver.Chrome(service=CHROME_SERVICE, options=options)
+    driver.implicitly_wait(2)
     yield driver
     driver.quit()
 

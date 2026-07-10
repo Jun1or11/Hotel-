@@ -12,19 +12,20 @@ class ProfilePage(BasePage):
 
     def open_profile(self):
         self.open("/mi-perfil")
-        time.sleep(1.5)  # pausa para ver la página de perfil cargada
+        self.find(*self.NOMBRE_INPUT, timeout=10)
+        time.sleep(1.5)
         return self
 
     def update_name(self, new_name):
-        time.sleep(1.0)  # pausa antes de escribir el nombre
+        time.sleep(1)
         self.type(*self.NOMBRE_INPUT, new_name)
-        time.sleep(1.5)  # pausa para ver el nombre escrito antes de guardar
+        time.sleep(1)
         self.click(*self.SAVE_BUTTON)
-        time.sleep(1.5)  # pausa para ver el mensaje de éxito
+        self.is_visible(*self.SUCCESS_MESSAGE, timeout=10)
+        time.sleep(1.5)
         return self
 
     def get_name_value(self):
-        time.sleep(0.8)  # pausa antes de leer el valor guardado
         return self.find(*self.NOMBRE_INPUT).get_attribute("value")
 
     def is_success_visible(self):

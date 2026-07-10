@@ -12,8 +12,8 @@ class TestAuth:
             email=new_user_credentials["email"],
             password=new_user_credentials["password"],
         )
-        assert login_page.wait_for_url("/habitaciones", timeout=15) or \
-               login_page.wait_for_url("/", timeout=5)
+        assert login_page.wait_for_url("/", timeout=5) or \
+               login_page.wait_for_url("/habitaciones", timeout=10)
 
     def test_login_admin(self, browser, frontend_url, admin_credentials):
         login_page = LoginPage(browser, frontend_url)
@@ -30,18 +30,23 @@ class TestAuth:
             email=guest_credentials["email"],
             password=guest_credentials["password"],
         )
-        assert login_page.wait_for_url("/habitaciones", timeout=15) or \
-               login_page.wait_for_url("/", timeout=5)
+        assert login_page.wait_for_url("/", timeout=5) or \
+               login_page.wait_for_url("/habitaciones", timeout=10)
 
     def test_logout(self, browser, frontend_url, guest_credentials):
+        import time
         login_page = LoginPage(browser, frontend_url)
         login_page.login(
             email=guest_credentials["email"],
             password=guest_credentials["password"],
         )
-        login_page.wait_for_url("/habitaciones", timeout=10)
+        time.sleep(1.5)
         home_page = HomePage(browser, frontend_url)
-        home_page.logout()
+        time.sleep(1)
+        home_page.click(*home_page.USER_AVATAR)
+        time.sleep(1.5)
+        home_page.click(*home_page.LOGOUT_BUTTON)
+        time.sleep(2)
         assert login_page.wait_for_url("/login", timeout=10)
 
     def test_update_profile(self, browser, frontend_url, guest_credentials):
@@ -50,7 +55,8 @@ class TestAuth:
             email=guest_credentials["email"],
             password=guest_credentials["password"],
         )
-        login_page.wait_for_url("/habitaciones", timeout=10)
+        import time
+        time.sleep(1.5)
         profile_page = ProfilePage(browser, frontend_url)
         profile_page.open_profile()
         new_name = "Ana Updated"

@@ -1,4 +1,4 @@
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, ConfigDict, Field
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
@@ -60,9 +60,7 @@ class Settings(BaseSettings):
 
         return f"postgresql+psycopg2://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+    model_config = ConfigDict(env_file=".env", case_sensitive=False)
 
 
 @lru_cache()

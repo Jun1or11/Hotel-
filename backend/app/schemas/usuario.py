@@ -1,6 +1,6 @@
 import re
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from datetime import datetime
 from typing import Optional
 
@@ -81,8 +81,7 @@ class UsuarioResponse(BaseModel):
     activo: bool
     fecha_registro: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UsuarioUpdate(BaseModel):

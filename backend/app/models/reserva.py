@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Date, DateTime, Numeric, Enum, ForeignKey, Text
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
 from app.database import Base
@@ -25,7 +25,7 @@ class Reserva(Base):
     total = Column(Numeric(10, 2), nullable=False)
     estado = Column(Enum(EstadoReservaEnum), default=EstadoReservaEnum.pendiente, nullable=False)
     solicitudes_especiales = Column(Text, nullable=True)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow)
+    fecha_creacion = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relaciones
     usuario = relationship("Usuario", back_populates="reservas")

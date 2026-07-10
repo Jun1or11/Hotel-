@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -7,17 +9,20 @@ from app.database import init_db
 
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
 # Crear aplicación FastAPI
 app = FastAPI(
     title="Hotel Nova API",
     description="API para gestionar reservas de hotel",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
-
-
-@app.on_event("startup")
-def startup_event() -> None:
-    init_db()
 
 # Configurar CORS
 app.add_middleware(

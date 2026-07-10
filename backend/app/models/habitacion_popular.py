@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import relationship
@@ -13,7 +13,7 @@ class HabitacionPopular(Base):
     id = Column(Integer, primary_key=True, index=True)
     habitacion_id = Column(Integer, ForeignKey("habitaciones.id"), nullable=False, index=True)
     total_reservas = Column(Integer, nullable=False, default=0)
-    fecha_ultima_reserva = Column(DateTime, nullable=False, default=datetime.utcnow)
+    fecha_ultima_reserva = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     habitacion = relationship("Habitacion", back_populates="popularidad")
 

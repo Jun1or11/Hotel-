@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Enum
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
 from app.database import Base
@@ -21,7 +21,7 @@ class Usuario(Base):
     password_hash = Column(String(255), nullable=False)
     rol = Column(Enum(RolEnum), default=RolEnum.huesped, nullable=False)
     activo = Column(Boolean, default=True)
-    fecha_registro = Column(DateTime, default=datetime.utcnow)
+    fecha_registro = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relaciones
     reservas = relationship("Reserva", back_populates="usuario")

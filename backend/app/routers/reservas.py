@@ -175,6 +175,24 @@ def create_new_reserva(
     return db_reserva
 
 
+@router.get("/mis-reservas", response_model=List[ReservaDetailResponse])
+def get_my_reservas(
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+    estado: str | None = None,
+    skip: int = 0,
+    limit: int = 100
+):
+    """
+    Obtiene todas las reservas del usuario actual.
+    """
+    estados = None
+    if estado:
+        estados = [e.strip() for e in estado.split(",") if e.strip()]
+
+    return get_user_reservas(db, current_user.id, estados=estados, skip=skip, limit=limit)
+
+
 @router.get("/{reserva_id}", response_model=ReservaDetailResponse)
 def get_reserva(
     reserva_id: int,
@@ -394,24 +412,6 @@ async def mercadopago_webhook(
         logger.info(f"MP webhook: reserva {reserva_id} updated to activo")
 
     return {"status": "ok", "reserva_id": reserva_id, "new_status": "activo"}
-
-
-@router.get("/mis-reservas", response_model=List[ReservaDetailResponse])
-def get_my_reservas(
-    db: Session = Depends(get_db),
-    current_user: Usuario = Depends(get_current_user),
-    estado: str | None = None,
-    skip: int = 0,
-    limit: int = 100
-):
-    """
-    Obtiene todas las reservas del usuario actual.
-    """
-    estados = None
-    if estado:
-        estados = [e.strip() for e in estado.split(",") if e.strip()]
-
-    return get_user_reservas(db, current_user.id, estados=estados, skip=skip, limit=limit)
 
 
 @router.get("", response_model=List[ReservaDetailResponse])

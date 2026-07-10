@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Numeric, DateTime, Enum, JSON
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
 from app.database import Base
@@ -30,7 +30,7 @@ class Habitacion(Base):
     estado = Column(Enum(EstadoHabitacionEnum), default=EstadoHabitacionEnum.libre, nullable=False)
     descripcion = Column(String(500), nullable=True)
     amenidades = Column(JSON, nullable=True, default=dict)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow)
+    fecha_creacion = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relaciones
     reservas = relationship("Reserva", back_populates="habitacion")

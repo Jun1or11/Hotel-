@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
@@ -14,7 +14,7 @@ class Resena(Base):
     usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False, index=True)
     puntuacion = Column(Integer, nullable=False)
     comentario = Column(String(500), nullable=True)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha_creacion = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     usuario = relationship("Usuario", back_populates="resena")
 

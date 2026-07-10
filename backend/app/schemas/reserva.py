@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import date, datetime
 from typing import Optional
 from decimal import Decimal
@@ -30,8 +30,7 @@ class ReservaResponse(BaseModel):
     solicitudes_especiales: Optional[str]
     fecha_creacion: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ReservaDetailResponse(BaseModel):
@@ -47,8 +46,7 @@ class ReservaDetailResponse(BaseModel):
     solicitudes_especiales: Optional[str]
     fecha_creacion: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ReservaUpdate(BaseModel):

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, Numeric, String
@@ -31,7 +31,7 @@ class Pago(Base):
     metodo = Column(Enum(MetodoPagoEnum), nullable=False, default=MetodoPagoEnum.mercadopago)
     estado = Column(Enum(EstadoPagoEnum), nullable=False, default=EstadoPagoEnum.pendiente)
     referencia_externa = Column(String(120), nullable=True)
-    fecha_pago = Column(DateTime, default=datetime.utcnow, nullable=False)
+    fecha_pago = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     reserva = relationship("Reserva", back_populates="pagos")
 

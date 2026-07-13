@@ -23,7 +23,6 @@ const getStatusClass = (status: string) => `status-chip status-${status}`;
 
 const AdminPagos: React.FC = () => {
   const [pagos, setPagos] = useState<AdminPago[]>([]);
-  const [reservas, setReservas] = useState<Reserva[]>([]);
   const [resumen, setResumen] = useState<PagosResumen>({
     cantidad_pagos_aprobados: 0,
     total_aprobado: 0,
@@ -50,15 +49,8 @@ const AdminPagos: React.FC = () => {
       axiosInstance.get('/api/pagos/resumen/mes-actual'),
     ]);
 
-    if (reservationsResult.status === 'fulfilled') {
-      setReservas(reservationsResult.value.data);
-    } else {
-      console.error('Error fetching reservations for payments:', reservationsResult.reason);
-      setReservas([]);
-    }
-
     if (paymentsResult.status === 'fulfilled') {
-      const reservationMap = new Map((reservationsResult.status === 'fulfilled' ? reservationsResult.value.data : []).map((reserva: Reserva) => [String(reserva.id), reserva]));
+      const reservationMap = new Map<string, Reserva>((reservationsResult.status === 'fulfilled' ? reservationsResult.value.data : []).map((reserva: Reserva) => [String(reserva.id), reserva]));
 
       setPagos(
         paymentsResult.value.data.map((pago: Pago) => {

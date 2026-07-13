@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Navbar from '../components/Navbar';
 import axiosInstance from '../api/axios';
-import { Pago, Reserva } from '../types';
+import { Pago } from '../types';
 
 const asNumber = (value: number | string) => Number(value ?? 0);
 const getStatusClass = (status: string) => `status-chip status-${status}`;
